@@ -44,3 +44,4 @@ yarn-error.log*
 # macos
 .DS_Store
 .env 
+.firebase/
