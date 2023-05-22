@@ -4,16 +4,15 @@ import {
   ISigningCosmWasmClientContext,
 } from 'hooks/cosmwasm'
 
-let CosmWasmContext: any
-let { Provider } = (CosmWasmContext =
-  createContext<ISigningCosmWasmClientContext>({
-    walletAddress: '',
-    signingClient: null,
-    loading: false,
-    error: null,
-    connectWallet: () => {},
-    disconnect: () => {},
-  }))
+const CosmWasmContext = createContext<ISigningCosmWasmClientContext>({
+  walletAddress: '',
+  signingClient: null,
+  loading: false,
+  error: null,
+  connectWallet: () => {},
+  disconnect: () => {},
+})
+const { Provider } = CosmWasmContext
 
 export const useSigningClient = (): ISigningCosmWasmClientContext =>
   useContext(CosmWasmContext)
