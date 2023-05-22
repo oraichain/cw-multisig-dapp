@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.w-screen {
+    background-color: #0F1017;
+}
+
+.label-text {
+    line-height: 0;
+}
+a {
+    text-align: left;
+}
+

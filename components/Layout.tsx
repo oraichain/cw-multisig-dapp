@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Nav from './Nav'
 
 const PUBLIC_SITE_TITLE = process.env.NEXT_PUBLIC_SITE_TITLE
-const POWERED_BY_URL = 'https://stargaze.zone'
+const POWERED_BY_URL = 'https://orai.io'
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <footer className="flex items-center justify-center w-full h-24 border-t">
         Powered by{'  '}
         <a className="pl-1 link link-primary link-hover" href={POWERED_BY_URL}>
-          <div>Stargaze</div>
+          <div>Oraichain</div>
         </a>
       </footer>
     </div>
