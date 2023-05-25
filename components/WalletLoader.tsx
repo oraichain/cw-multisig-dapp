@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useSigningClient } from 'contexts/cosmwasm'
 import Loader from './Loader'
 
@@ -15,6 +15,13 @@ function WalletLoader({
     error,
     connectWallet,
   } = useSigningClient()
+
+  useEffect(() => {
+    // auto connect when open page
+    if (walletAddress.length === 0) {
+      connectWallet()
+    }
+  }, [])
 
   if (loading || clientLoading) {
     return (

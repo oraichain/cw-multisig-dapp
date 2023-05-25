@@ -21,23 +21,19 @@ function Nav() {
       <nav className="flex flex-wrap text-center md:text-left md:flex flex-row w-full justify-between items-center py-4 ">
         <div className="flex items-center">
           <Link href="/">
-            <a>
-              {PUBLIC_SITE_ICON_URL.length > 0 ? (
-                <Image
-                  src={PUBLIC_SITE_ICON_URL}
-                  height={48}
-                  width={400}
-                  alt={"Stargaze Logo"}
-                />
-              ) : (
-                <span className="text-2xl">⚛️ </span>
-              )}
-            </a>
+            {PUBLIC_SITE_ICON_URL.length > 0 ? (
+              <Image
+                src={PUBLIC_SITE_ICON_URL}
+                height={48}
+                width={400}
+                alt={'Oraichain Logo'}
+              />
+            ) : (
+              <span className="text-2xl">⚛️ </span>
+            )}
           </Link>
           <Link href="/">
-            <a className="ml-1 md:ml-2 link link-hover font-semibold text-xl md:text-2xl align-top">
-              
-            </a>
+            <span className="ml-1 md:ml-2 link link-hover font-semibold text-xl md:text-2xl align-top"></span>
           </Link>
         </div>
         <NavContractLabel />

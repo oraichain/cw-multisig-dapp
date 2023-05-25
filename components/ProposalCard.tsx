@@ -91,30 +91,28 @@ export default function ProposalCard({
 
   return (
     <Link href={`/${encodeURIComponent(multisigAddress)}/${id}`}>
-      <a>
-        <div
-          className={`card shadow-lg mb-4`}
-          title={`Expires at ${expiresAtDateTime}`}
-        >
-          <div className="card-body py-4 px-8">
-            <div className="card-title flex flex-row justify-between m-0">
-              <div>{title}</div>
-              {status === 'passed' && (
-                <div className="text-2xl text-warning">{icons.warning}</div>
-              )}
-              {status === 'rejected' && (
-                <div className="text-2xl text-error">{icons.error}</div>
-              )}
-              {status === 'executed' && (
-                <div className="text-2xl text-success">&#x2713;</div>
-              )}
-              {status === 'open' && (
-                <div className="text-2xl text-info">{icons.bell}</div>
-              )}
-            </div>
+      <div
+        className={`card shadow-lg mb-4`}
+        title={`Expires at ${expiresAtDateTime}`}
+      >
+        <div className="card-body py-4 px-8">
+          <div className="card-title flex flex-row justify-between m-0">
+            <div>{title}</div>
+            {status === 'passed' && (
+              <div className="text-2xl text-warning">{icons.warning}</div>
+            )}
+            {status === 'rejected' && (
+              <div className="text-2xl text-error">{icons.error}</div>
+            )}
+            {status === 'executed' && (
+              <div className="text-2xl text-success">&#x2713;</div>
+            )}
+            {status === 'open' && (
+              <div className="text-2xl text-info">{icons.bell}</div>
+            )}
           </div>
         </div>
-      </a>
+      </div>
     </Link>
   )
 }
