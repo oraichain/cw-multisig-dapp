@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import daisyuiThemes from 'styles/daisyui-themes.json'
 
 const themes = Object.keys(daisyuiThemes) || ['']
-export const defaultTheme = themes[0]
+export const defaultTheme = themes[1]
 
 function ThemeToggle() {
   const [theme, setTheme] = useState(defaultTheme)

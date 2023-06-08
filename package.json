@@ -1,5 +1,6 @@
 {
   "name": "cw3-fixed-multisig-dapp",
+  "license": "MIT",
   "version": "0.1.0",
   "private": true,
   "scripts": {

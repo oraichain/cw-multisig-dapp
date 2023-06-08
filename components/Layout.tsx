@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: ReactNode }) {
     <div className="flex flex-col items-center justify-center min-h-screen bg-base-100 text-base-content">
       <Head>
         <title>{PUBLIC_SITE_TITLE}</title>
-        <link rel="icon" href="/pixel.png" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Nav />

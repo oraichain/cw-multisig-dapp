@@ -7,6 +7,10 @@ const Home: NextPage = () => {
   const router = useRouter()
   const [address, setAddress] = useState('')
 
+  if (router.asPath !== router.route && router.route === '/') {
+    router.push(router.asPath)
+  }
+
   return (
     <WalletLoader>
       <div className="flex flex-col w-full">
