@@ -7,11 +7,16 @@ import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { InstantiateResult } from '@cosmjs/cosmwasm-stargate'
 import { InstantiateMsg, Voter } from 'types/cw3'
-import { StdFee } from "@cosmjs/stargate";
+import { StdFee } from '@cosmjs/stargate'
 
-const defaultFee: StdFee = { amount: [{ amount: "10000", denom: "ustars" },], gas: "500000" };
+const defaultFee: StdFee = {
+  amount: [{ amount: '10000', denom: 'ustars' }],
+  gas: '500000',
+}
 
-const MULTISIG_CODE_ID = parseInt(process.env.NEXT_PUBLIC_MULTISIG_CODE_ID as string)
+const MULTISIG_CODE_ID = parseInt(
+  process.env.NEXT_PUBLIC_MULTISIG_CODE_ID as string
+)
 
 function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   return (
@@ -94,7 +99,7 @@ const CreateMultisig: NextPage = () => {
 
     const msg = {
       voters,
-      threshold: {absolute_count:{weight: required_weight}},
+      threshold: { absolute_count: { weight: required_weight } },
       max_voting_period,
     }
 
