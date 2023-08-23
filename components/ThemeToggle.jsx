@@ -1,5 +1,5 @@
-import { themeChange } from 'theme-change'
-import { useEffect, useState } from 'react'
+'use client'
+import { useState } from 'react'
 import daisyuiThemes from 'styles/daisyui-themes.json'
 
 const themes = Object.keys(daisyuiThemes) || ['']
@@ -7,12 +7,6 @@ export const defaultTheme = themes[1]
 
 function ThemeToggle() {
   const [theme, setTheme] = useState(defaultTheme)
-  useEffect(() => {
-    themeChange(false)
-    setTheme(
-      document.documentElement.getAttribute('data-theme') || defaultTheme
-    )
-  }, [])
 
   return (
     <div className="form-control lg:mr-4 md:ml-auto">
@@ -70,9 +64,12 @@ function ThemeToggle() {
           data-toggle-theme={themes.join(',')}
           data-act-class="active"
           checked={theme !== themes[0]}
-          onClick={() =>
-            setTheme(theme !== defaultTheme ? defaultTheme : themes[1])
-          }
+          onChange={() => {
+            const newTheme = theme !== defaultTheme ? defaultTheme : themes[0]
+            document.documentElement.setAttribute('data-theme', newTheme)
+            window.localStorage.setItem('theme', newTheme)
+            setTheme(newTheme)
+          }}
           readOnly
         />
         <span className="label-text">

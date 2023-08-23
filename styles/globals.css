@@ -12,4 +12,20 @@
 a {
     text-align: left;
 }
+.stroke-current{
+    fill: white;
+}
+.text-2xl{
+    color:white;
+}
+
+[data-theme='stargazeDark'] {
+    --primary-color: white;
+    .stroke-current{
+        fill: none;
+    }
+}
+[data-theme='stargazeLight'] {
+    --primary-color: dimgray;    
+}
 
