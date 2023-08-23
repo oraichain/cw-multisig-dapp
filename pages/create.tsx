@@ -54,11 +54,11 @@ function validateNonEmpty(msg: InstantiateMsg, label: string) {
   if (label.length === 0) {
     return false
   }
-  if (
-    voters.some(({ addr, weight }: Voter) => addr.length === 0 || isNaN(weight))
-  ) {
-    return false
-  }
+  // if (
+  //   voters.some(({ addr, weight }: Voter) => addr.length === 0 || isNaN(weight))
+  // ) {
+  //   return false
+  // }
   return true
 }
 
@@ -81,7 +81,7 @@ const CreateMultisig: NextPage = () => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (event: FormEvent<MultisigFormElement>) => {
+  const handleSubmit = async (event: FormEvent<MultisigFormElement>) => {
     event.preventDefault()
     setError('')
     setLoading(true)
@@ -97,8 +97,22 @@ const CreateMultisig: NextPage = () => {
       time: parseInt(formEl.duration.value?.trim()),
     }
 
+    // instantiate group address
+    const groupAddrMsg = {
+      admin: walletAddress,
+      members: voters,
+    }
+    const result = await signingClient.instantiate(
+      walletAddress,
+      Number(process.env.NEXT_PUBLIC_CW4_GROUP_CODE_ID),
+      groupAddrMsg,
+      'cw4 group address',
+      defaultFee,
+      { admin: walletAddress }
+    )
+
     const msg = {
-      voters,
+      group_addr: result.contractAddress,
       threshold: { absolute_count: { weight: required_weight } },
       max_voting_period,
     }
@@ -119,7 +133,9 @@ const CreateMultisig: NextPage = () => {
     }
 
     signingClient
-      .instantiate(walletAddress, MULTISIG_CODE_ID, msg, label, defaultFee)
+      .instantiate(walletAddress, MULTISIG_CODE_ID, msg, label, defaultFee, {
+        admin: walletAddress,
+      })
       .then((response: InstantiateResult) => {
         setLoading(false)
         if (response.contractAddress.length > 0) {
