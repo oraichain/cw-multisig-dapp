@@ -13,7 +13,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.30.1",
     "daisyui": "^1.14.0",
     "lodash.clonedeep": "^4.5.0",
-    "next": "^13.4.3",
+    "next": "^13.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
