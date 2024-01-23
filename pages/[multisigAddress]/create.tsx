@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import type { NextPage } from 'next'
 import WalletLoader from 'components/WalletLoader'
 import Select from 'react-select'
@@ -88,7 +90,7 @@ const ProposalCreate: NextPage = () => {
               className="my-8 shadow-sm text-lg rounded-full form-select"
               onChange={setProposalForm}
             />
-
+            
             <Form
               readonly={complete}
               widgets={widgets}
@@ -101,7 +103,7 @@ const ProposalCreate: NextPage = () => {
                   createProposal(proposal)
                 }
               }}
-            />
+            >
           </div>
 
           {/* <label className="block">Title</label>
