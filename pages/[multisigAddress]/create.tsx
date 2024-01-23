@@ -5,9 +5,15 @@ import { useState, FormEvent } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import cloneDeep from 'lodash.clonedeep'
-import { StdFee } from "@cosmjs/stargate";
+import { StdFee } from '@cosmjs/stargate'
+import FormFactory from 'components/ProposalForms/FormFactory'
 
-const defaultFee: StdFee = { amount: [{ amount: "10000", denom: "ustars" },], gas: "500000" };
+console.log(FormFactory.Keys)
+
+const defaultFee: StdFee = {
+  amount: [{ amount: '10000', denom: 'ustars' }],
+  gas: '500000',
+}
 
 interface FormElements extends HTMLFormControlsCollection {
   label: HTMLInputElement
@@ -62,9 +68,9 @@ const ProposalCreate: NextPage = () => {
     // https://medium.com/intrinsic-blog/javascript-prototype-poisoning-vulnerabilities-in-the-wild-7bc15347c96
     const jsonClone = cloneDeep(jsonStr)
     let json: any
-    try{
+    try {
       json = JSON.parse(jsonClone)
-    } catch(e) {
+    } catch (e) {
       setLoading(false)
       setError('Error in JSON message.')
       return
@@ -76,7 +82,7 @@ const ProposalCreate: NextPage = () => {
       return
     }
     const msgs = json
-    
+
     const msg = {
       title,
       description,

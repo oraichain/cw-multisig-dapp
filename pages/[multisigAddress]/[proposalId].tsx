@@ -7,6 +7,7 @@ import LineAlert from 'components/LineAlert'
 import { VoteInfo, ProposalResponse } from 'types/cw3'
 import { StdFee } from '@cosmjs/stargate'
 import JsonHighlight from 'components/JsonHighlight'
+import { parseJSONRecursive } from 'util/json'
 
 const defaultFee: StdFee = {
   amount: [{ amount: '10000', denom: 'ustars' }],
@@ -185,7 +186,10 @@ const Proposal: NextPage = () => {
               <h1 className="text-3xl font-bold mb-8">{proposal.title}</h1>
               <p className="mb-8">{proposal.description}</p>
               <div className="p-2 border border-black rounded mb-8">
-                <JsonHighlight className="break-all" data={proposal.msgs} />
+                <JsonHighlight
+                  className="break-all"
+                  data={parseJSONRecursive(proposal.msgs)}
+                />
               </div>
 
               <VoteButtons
