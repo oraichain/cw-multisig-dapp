@@ -1,14 +1,18 @@
 import type { NextPage } from 'next'
 import WalletLoader from 'components/WalletLoader'
+import Select from 'react-select'
+import Form from '@rjsf/core'
 import { useSigningClient } from 'contexts/cosmwasm'
-import { useState, FormEvent } from 'react'
+import validator from '@rjsf/validator-ajv8'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
-import cloneDeep from 'lodash.clonedeep'
 import { StdFee } from '@cosmjs/stargate'
+import widgets from 'components/widgets'
 import FormFactory from 'components/ProposalForms/FormFactory'
 
-console.log(FormFactory.Keys)
+const forms = FormFactory.Keys.map((value) => FormFactory.createForm(value))
+const options = forms.map(({ key, title }) => ({ value: key, label: title }))
 
 const defaultFee: StdFee = {
   amount: [{ amount: '10000', denom: 'ustars' }],
@@ -43,51 +47,15 @@ const ProposalCreate: NextPage = () => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [proposalID, setProposalID] = useState('')
+  const [proposalForm, setProposalForm] = useState(options[0])
 
-  const handleSubmit = (event: FormEvent<ProposalFormElement>) => {
-    event.preventDefault()
+  const form = forms.find((item) => item.key === proposalForm.value)
+
+  // const handleSubmit = (event: FormEvent<ProposalFormElement>) => {
+  //   event.preventDefault()
+  const createProposal = (msg: any) => {
     setLoading(true)
     setError('')
-
-    const currentTarget = event.currentTarget as ProposalFormElement
-
-    const title = currentTarget.label.value.trim()
-    const description = currentTarget.description.value.trim()
-    const jsonStr = currentTarget.json.value.trim()
-
-    if (
-      title.length === 0 ||
-      description.length === 0 ||
-      jsonStr.length === 0
-    ) {
-      setLoading(false)
-      setError('All fields are required.')
-    }
-
-    // clone json string to avoid prototype poisoning
-    // https://medium.com/intrinsic-blog/javascript-prototype-poisoning-vulnerabilities-in-the-wild-7bc15347c96
-    const jsonClone = cloneDeep(jsonStr)
-    let json: any
-    try {
-      json = JSON.parse(jsonClone)
-    } catch (e) {
-      setLoading(false)
-      setError('Error in JSON message.')
-      return
-    }
-
-    if (!validateJsonSendMsg(json, multisigAddress)) {
-      setLoading(false)
-      setError('Error in JSON message.')
-      return
-    }
-    const msgs = json
-
-    const msg = {
-      title,
-      description,
-      msgs,
-    }
 
     signingClient
       ?.execute(walletAddress, multisigAddress, { propose: msg }, defaultFee)
@@ -113,12 +81,30 @@ const ProposalCreate: NextPage = () => {
     <WalletLoader>
       <div className="flex flex-col w-full">
         <div className="grid bg-base-100 place-items-center">
-          <form
-            className="text-left container mx-auto max-w-lg"
-            onSubmit={handleSubmit}
-          >
-            <h1 className="text-4xl my-8 text-bold">Create Proposal</h1>
-            <label className="block">Title</label>
+          <div className="text-left container mx-auto max-w-lg">
+            <Select
+              options={options}
+              value={proposalForm}
+              className="my-8 shadow-sm text-lg rounded-full form-select"
+              onChange={setProposalForm}
+            />
+
+            <Form
+              readonly={complete}
+              widgets={widgets}
+              schema={form.schema.schema}
+              validator={validator}
+              uiSchema={form.schema.uiSchema}
+              onSubmit={({ formData }) => {
+                const proposal = form.processData(formData)
+                if (proposal) {
+                  createProposal(proposal)
+                }
+              }}
+            />
+          </div>
+
+          {/* <label className="block">Title</label>
             <input
               className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
               name="label"
@@ -137,43 +123,42 @@ const ProposalCreate: NextPage = () => {
               name="json"
               readOnly={complete}
               placeholder='[{"bank":{"send":{"to_address":"stars153w5xhuqu3et29lgqk4dsynj6gjn96lr33wx4e","amount":[{"denom":"ustars","amount":"1000000"}]}}}]'
-            />
-            {!complete && (
-              <button
-                className={`btn btn-primary text-lg mt-8 ml-auto ${
-                  loading ? 'loading' : ''
-                }`}
-                style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
-                type="submit"
-                disabled={loading}
-              >
-                Create Proposal
-              </button>
-            )}
-            {error && (
-              <div className="mt-8">
-                <LineAlert variant="error" msg={error} />
-              </div>
-            )}
+            /> */}
+          {/* {!complete && (
+          <button
+            className={`btn btn-primary text-lg mt-8 ml-auto ${
+              loading ? 'loading' : ''
+            }`}
+            style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+            type="submit"
+            disabled={loading}
+          >
+            Create Proposal
+          </button>
+        )} */}
+          {error && (
+            <div className="mt-8">
+              <LineAlert variant="error" msg={error} />
+            </div>
+          )}
 
-            {proposalID.length > 0 && (
-              <div className="mt-8 text-right">
-                <LineAlert
-                  variant="success"
-                  msg={`Success! Transaction Hash: ${transactionHash}`}
-                />
-                <button
-                  className="mt-4 box-border px-4 py-2 btn btn-primary"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    router.push(`/${multisigAddress}/${proposalID}`)
-                  }}
-                >
-                  View Proposal &#8599;
-                </button>
-              </div>
-            )}
-          </form>
+          {proposalID.length > 0 && (
+            <div className="mt-8 text-right">
+              <LineAlert
+                variant="success"
+                msg={`Success! Transaction Hash: ${transactionHash}`}
+              />
+              <button
+                className="mt-4 box-border px-4 py-2 btn btn-primary"
+                onClick={(e) => {
+                  e.preventDefault()
+                  router.push(`/${multisigAddress}/${proposalID}`)
+                }}
+              >
+                View Proposal &#8599;
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </WalletLoader>
