@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import type { NextPage } from 'next'
 import WalletLoader from 'components/WalletLoader'
 import Select from 'react-select'
@@ -105,38 +107,6 @@ const ProposalCreate: NextPage = () => {
             />
           </div>
 
-          {/* <label className="block">Title</label>
-            <input
-              className="input input-bordered rounded box-border p-3 w-full focus:input-primary text-xl"
-              name="label"
-              readOnly={complete}
-            />
-            <label className="block mt-4">Description</label>
-            <textarea
-              className="input input-bordered rounded box-border p-3 h-24 w-full focus:input-primary text-xl"
-              name="description"
-              readOnly={complete}
-            />
-            <label className="block mt-4">JSON Message Array</label>
-            <textarea
-              className="input input-bordered rounded box-border p-3 w-full font-mono h-80 focus:input-primary text-x"
-              cols={7}
-              name="json"
-              readOnly={complete}
-              placeholder='[{"bank":{"send":{"to_address":"stars153w5xhuqu3et29lgqk4dsynj6gjn96lr33wx4e","amount":[{"denom":"ustars","amount":"1000000"}]}}}]'
-            /> */}
-          {/* {!complete && (
-          <button
-            className={`btn btn-primary text-lg mt-8 ml-auto ${
-              loading ? 'loading' : ''
-            }`}
-            style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
-            type="submit"
-            disabled={loading}
-          >
-            Create Proposal
-          </button>
-        )} */}
           {error && (
             <div className="mt-8">
               <LineAlert variant="error" msg={error} />
@@ -147,6 +117,7 @@ const ProposalCreate: NextPage = () => {
             <div className="mt-8 text-right">
               <LineAlert
                 variant="success"
+                link={`https://oraiscan.io/Oraichain/tx/${transactionHash}`}
                 msg={`Success! Transaction Hash: ${transactionHash}`}
               />
               <button

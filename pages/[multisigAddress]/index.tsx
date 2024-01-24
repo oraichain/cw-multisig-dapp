@@ -8,7 +8,7 @@ import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3'
 
 // TODO: review union Expiration from types/cw3
 type Expiration = {
-  at_time: Timestamp
+  at_height: number
 }
 
 const Home: NextPage = () => {
@@ -21,7 +21,14 @@ const Home: NextPage = () => {
   >([])
   const [hideLoadMore, setHideLoadMore] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [blockHeight, setBlockHeight] = useState(0)
   const [startBefore, setStartBefore] = useState<number | null>(null)
+
+  const getExpiresAt = (expires: Expiration) => {
+    const miliseconds = Date.now() + (expires.at_height - blockHeight) * 5000
+    const expiresAtDateTime = new Date(miliseconds).toLocaleString()
+    return expiresAtDateTime
+  }
 
   useEffect(() => {
     if (walletAddress.length === 0 || !signingClient) {
@@ -29,6 +36,7 @@ const Home: NextPage = () => {
       setHideLoadMore(false)
       return
     }
+    signingClient.getHeight().then(setBlockHeight)
     setLoading(true)
     signingClient
       .queryContractSmart(multisigAddress, {
@@ -81,7 +89,7 @@ const Home: NextPage = () => {
               title={title}
               id={`${id}`}
               status={status}
-              expires_at={parseInt(expires.at_time)}
+              expires_at={getExpiresAt(expires)}
               multisigAddress={multisigAddress}
             />
           )
