@@ -7,16 +7,7 @@ import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { InstantiateResult } from '@cosmjs/cosmwasm-stargate'
 import { InstantiateMsg, Voter } from 'types/cw3'
-import { StdFee } from '@cosmjs/stargate'
-
-const defaultFee: StdFee = {
-  amount: [{ amount: '10000', denom: 'ustars' }],
-  gas: '500000',
-}
-
-const MULTISIG_CODE_ID = parseInt(
-  process.env.NEXT_PUBLIC_MULTISIG_CODE_ID as string
-)
+import { MULTISIG_CODE_ID, defaultFee } from 'hooks/cosmwasm'
 
 function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   return (

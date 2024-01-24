@@ -1,11 +1,21 @@
 import type { NextPage } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import WalletLoader from 'components/WalletLoader'
+import { useSigningClient } from 'contexts/cosmwasm'
+import { MULTISIG_CODE_ID } from 'hooks/cosmwasm'
+import Link from 'next/link'
 
 const Home: NextPage = () => {
   const router = useRouter()
   const [address, setAddress] = useState('')
+  const [contracts, setContracts] = useState<readonly string[]>([])
+  const { signingClient } = useSigningClient()
+
+  useEffect(() => {
+    if (!signingClient) return
+    signingClient.getContracts(MULTISIG_CODE_ID).then(setContracts)
+  }, [signingClient])
 
   if (router.asPath !== router.route && router.route === '/') {
     router.push(router.asPath)
@@ -16,6 +26,17 @@ const Home: NextPage = () => {
       <div className="flex flex-col w-full">
         <div className="grid bg-base-100 place-items-center">
           <h1 className="text-4xl font-bold mb-8">Existing...</h1>
+          <div className="w-full max-w-xl xl:max-w-2xl">
+            {contracts.map((contract) => (
+              <Link
+                key={contract}
+                href={`/${encodeURIComponent(contract)}`}
+                className="block btn btn-link btn-primary w-full max-w-full truncate lowercase text-left"
+              >
+                {contract}
+              </Link>
+            ))}
+          </div>
           <div className="flex w-full max-w-xl xl:max-w-2xl">
             <div className="relative rounded-full shadow-sm w-full">
               <input

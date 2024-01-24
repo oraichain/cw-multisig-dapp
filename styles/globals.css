@@ -53,6 +53,20 @@ nav .text-2xl{
     }
 }
 
+.form-select .react-select__control {
+    font-size: 2rem;
+    line-height: 2.5rem;    
+    background-color: hsla(var(--b1)/var(--tw-bg-opacity,1));    
+    border-color: hsla(var(--bc)/var(--tw-border-opacity,1));    
+    border-width: 1px;
+    border-radius: var(--rounded-btn,.5rem);  
+}
+
+.form-select .react-select__single-value {
+    --tw-text-opacity: 1;
+    color: hsla(var(--bc) / var(--tw-text-opacity));
+}
+
 .form-select div[role=listbox] {
     --tw-bg-opacity: 1;
     background-color: hsla(var(--p)/var(--tw-bg-opacity,1));    

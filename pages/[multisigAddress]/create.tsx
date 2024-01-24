@@ -85,24 +85,24 @@ const ProposalCreate: NextPage = () => {
             <Select
               options={options}
               value={proposalForm}
+              classNamePrefix="react-select"
               className="my-8 shadow-sm text-lg rounded-full form-select"
               onChange={setProposalForm}
             />
-            <>
-              <Form
-                readonly={complete}
-                widgets={widgets}
-                schema={form.schema.schema}
-                validator={validator}
-                uiSchema={form.schema.uiSchema}
-                onSubmit={({ formData }) => {
-                  const proposal = form.processData(formData)
-                  if (proposal) {
-                    createProposal(proposal)
-                  }
-                }}
-              />
-            </>
+
+            <Form
+              readonly={complete}
+              widgets={widgets}
+              schema={form.schema.schema}
+              validator={validator}
+              uiSchema={form.schema.uiSchema}
+              onSubmit={({ formData }) => {
+                const proposal = form.processData(formData)
+                if (proposal) {
+                  createProposal(proposal)
+                }
+              }}
+            />
           </div>
 
           {/* <label className="block">Title</label>
