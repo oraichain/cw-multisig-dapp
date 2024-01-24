@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { connectKeplr } from 'services/keplr'
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { StdFee } from '@cosmjs/stargate'
 export interface ISigningCosmWasmClientContext {
   walletAddress: string
   signingClient: SigningCosmWasmClient | null
@@ -9,11 +8,6 @@ export interface ISigningCosmWasmClientContext {
   error: any
   connectWallet: any
   disconnect: Function
-}
-
-export const defaultFee: StdFee = {
-  amount: [{ amount: '10000', denom: process.env.NEXT_PUBLIC_STAKING_DENOM }],
-  gas: '500000',
 }
 
 export const PUBLIC_RPC_ENDPOINT =

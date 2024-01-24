@@ -5,14 +5,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { VoteInfo, ProposalResponse } from 'types/cw3'
-import { StdFee } from '@cosmjs/stargate'
 import JsonHighlight from 'components/JsonHighlight'
 import { parseJSONRecursive } from 'util/json'
-
-const defaultFee: StdFee = {
-  amount: [{ amount: '10000', denom: 'ustars' }],
-  gas: '500000',
-}
 
 function VoteButtons({
   onVoteYes = () => {},
@@ -119,7 +113,7 @@ const Proposal: NextPage = () => {
         {
           vote: { proposal_id: parseInt(proposalId), vote },
         },
-        defaultFee
+        'auto'
       )
       .then((response) => {
         setTimestamp(new Date())
@@ -140,7 +134,7 @@ const Proposal: NextPage = () => {
         {
           execute: { proposal_id: parseInt(proposalId) },
         },
-        defaultFee
+        'auto'
       )
       .then((response) => {
         setTimestamp(new Date())
@@ -161,7 +155,7 @@ const Proposal: NextPage = () => {
         {
           close: { proposal_id: parseInt(proposalId) },
         },
-        defaultFee
+        'auto'
       )
       .then((response) => {
         setTimestamp(new Date())

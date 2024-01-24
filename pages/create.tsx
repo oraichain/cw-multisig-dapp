@@ -6,8 +6,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { InstantiateResult } from '@cosmjs/cosmwasm-stargate'
-import { InstantiateMsg, Voter } from 'types/cw3'
-import { MULTISIG_CODE_ID, defaultFee } from 'hooks/cosmwasm'
+import { InstantiateMsg } from 'types/cw3'
+import { MULTISIG_CODE_ID } from 'hooks/cosmwasm'
 
 function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   return (
@@ -98,7 +98,7 @@ const CreateMultisig: NextPage = () => {
       Number(process.env.NEXT_PUBLIC_CW4_GROUP_CODE_ID),
       groupAddrMsg,
       'cw4 group address',
-      defaultFee,
+      'auto',
       { admin: walletAddress }
     )
 
@@ -124,7 +124,7 @@ const CreateMultisig: NextPage = () => {
     }
 
     signingClient
-      .instantiate(walletAddress, MULTISIG_CODE_ID, msg, label, defaultFee, {
+      .instantiate(walletAddress, MULTISIG_CODE_ID, msg, label, 'auto', {
         admin: walletAddress,
       })
       .then((response: InstantiateResult) => {

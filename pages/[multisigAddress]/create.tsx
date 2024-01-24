@@ -9,17 +9,11 @@ import validator from '@rjsf/validator-ajv8'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
-import { StdFee } from '@cosmjs/stargate'
 import widgets from 'components/widgets'
 import FormFactory from 'components/ProposalForms/FormFactory'
 
 const forms = FormFactory.Keys.map((value) => FormFactory.createForm(value))
 const options = forms.map(({ key, title }) => ({ value: key, label: title }))
-
-const defaultFee: StdFee = {
-  amount: [{ amount: '10000', denom: 'ustars' }],
-  gas: '500000',
-}
 
 interface FormElements extends HTMLFormControlsCollection {
   label: HTMLInputElement
@@ -60,7 +54,7 @@ const ProposalCreate: NextPage = () => {
     setError('')
 
     signingClient
-      ?.execute(walletAddress, multisigAddress, { propose: msg }, defaultFee)
+      ?.execute(walletAddress, multisigAddress, { propose: msg }, 'auto')
       .then((response) => {
         setLoading(false)
         setTransactionHash(response.transactionHash)
