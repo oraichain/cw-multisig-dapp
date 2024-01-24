@@ -15,7 +15,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (!signingClient) return
     signingClient.getContracts(MULTISIG_CODE_ID).then(setContracts)
-  }, [signingClient, address])
+  }, [signingClient])
 
   if (router.asPath !== router.route && router.route === '/') {
     router.push(router.asPath)

@@ -19,14 +19,7 @@ function WalletLoader({
   useEffect(() => {
     // auto connect when open page
     if (walletAddress.length === 0) {
-      if (document.readyState === 'complete') {
-        connectWallet()
-      } else {
-        window.addEventListener('load', connectWallet)
-      }
-    }
-    return () => {
-      window.removeEventListener('load', connectWallet)
+      connectWallet()
     }
   }, [])
 
