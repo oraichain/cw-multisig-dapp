@@ -51,12 +51,12 @@ export function convertToFixedDecimals(amount: number | string): string {
 
 export const zeroVotingCoin = {
   amount: '0',
-  denom: 'ucredits',
+  denom: 'orai',
 }
 
 export const zeroStakingCoin = {
   amount: '0',
-  denom: process.env.NEXT_PUBLIC_STAKING_DENOM || 'ustars',
+  denom: process.env.NEXT_PUBLIC_STAKING_DENOM || 'orai',
 }
 
 export const customRegistry = new Registry(defaultStargateTypes)
