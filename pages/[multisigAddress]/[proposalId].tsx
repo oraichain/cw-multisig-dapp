@@ -16,17 +16,32 @@ function VoteButtons({
   walletAddress = '',
   status = '',
 }) {
-  const [vote]: VoteInfo[] = votes.filter(
-    (v: VoteInfo) => v.voter === walletAddress
-  )
+  let voted = false
 
-  if (vote) {
+  const voteList = votes.map((vote) => {
     const variant =
       vote.vote === 'yes' ? 'success' : vote.vote === 'no' ? 'error' : 'error'
-    const msg = `You voted ${vote.vote}`
+    let voter = vote.voter
+    if (voter === walletAddress) {
+      voted = true
+      voter = 'You (' + voter + ')'
+    }
+    return (
+      <LineAlert
+        key={vote.voter}
+        className="mt-2"
+        variant={variant}
+        link={`https://oraiscan.io/Oraichain/account/${vote.voter}`}
+        msg={`${voter} voted ${vote.vote}`}
+      />
+    )
+  })
+
+  if (voted) {
     return (
       <>
-        <LineAlert className="mt-2" variant={variant} msg={msg} />
+        {voteList}
+
         {status === 'open' && (
           <button
             className="box-border px-4 py-2 rounded bg-gray-500 hover:bg-gray-600 text-white my-4"
@@ -38,31 +53,35 @@ function VoteButtons({
       </>
     )
   }
+
   if (status !== 'open') {
     return null
   }
   return (
-    <div className="flex justify-between content-center mt-2">
-      <button
-        className="box-border px-4 py-2 rounded bg-gray-500 hover:bg-gray-600 text-white"
-        onClick={onBack}
-      >
-        {'< Proposals'}
-      </button>
+    <>
+      {voteList}
+      <div className="flex justify-between content-center mt-2">
+        <button
+          className="box-border px-4 py-2 rounded bg-gray-500 hover:bg-gray-600 text-white"
+          onClick={onBack}
+        >
+          {'< Proposals'}
+        </button>
 
-      <button
-        className="box-border px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
-        onClick={onVoteYes}
-      >
-        Sign
-      </button>
-      <button
-        className="box-border px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
-        onClick={onVoteNo}
-      >
-        Reject
-      </button>
-    </div>
+        <button
+          className="box-border px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
+          onClick={onVoteYes}
+        >
+          Sign
+        </button>
+        <button
+          className="box-border px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
+          onClick={onVoteNo}
+        >
+          Reject
+        </button>
+      </div>
+    </>
   )
 }
 
