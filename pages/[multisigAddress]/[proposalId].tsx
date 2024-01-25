@@ -206,6 +206,7 @@ const Proposal: NextPage = () => {
                 <div className="mt-8">
                   <LineAlert
                     variant="success"
+                    link={`https://oraiscan.io/Oraichain/tx/${transactionHash}`}
                     msg={`Success! Transaction Hash: ${transactionHash}`}
                   />
                 </div>
