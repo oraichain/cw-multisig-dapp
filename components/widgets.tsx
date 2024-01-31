@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactCodeMirror from '@uiw/react-codemirror'
+import { EditorView } from '@codemirror/view'
 import { json } from '@codemirror/lang-json'
 import beautify from 'json-beautify-fix'
 
@@ -8,8 +9,9 @@ const JsonEditorWidget = (props) => {
 
   return (
     <ReactCodeMirror
+      className="max-w-lg"
       value={props.value}
-      extensions={[json()]}
+      extensions={[json(), EditorView.lineWrapping]}
       editable
       theme="dark"
       onChange={(val) => {
@@ -21,7 +23,7 @@ const JsonEditorWidget = (props) => {
         }
       }}
       placeholder={placeholder}
-      style={{ border: 'none', height: '100%' }}
+      style={{ height: '100%' }}
     />
   )
 }

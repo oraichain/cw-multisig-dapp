@@ -6,11 +6,12 @@ import Select from 'react-select'
 import Form from '@rjsf/core'
 import { useSigningClient } from 'contexts/cosmwasm'
 import validator from '@rjsf/validator-ajv8'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import widgets from 'components/widgets'
 import FormFactory from 'components/ProposalForms/FormFactory'
+import { parseJSONRecursive } from 'util/json'
 
 const forms = FormFactory.Keys.map((value) => FormFactory.createForm(value))
 const options = forms.map(({ key, title }) => ({ value: key, label: title }))
@@ -21,11 +22,8 @@ interface FormElements extends HTMLFormControlsCollection {
   json: HTMLInputElement
 }
 
-interface ProposalFormElement extends HTMLFormElement {
-  readonly elements: FormElements
-}
-
-function validateJsonSendMsg(json: any, multisigAddress: string) {
+function validateJsonSendMsg(json: any) {
+  if (json === undefined) return false
   if (typeof json !== 'object') {
     return false
   }
@@ -38,17 +36,39 @@ function validateJsonSendMsg(json: any, multisigAddress: string) {
 const ProposalCreate: NextPage = () => {
   const router = useRouter()
   const multisigAddress = (router.query.multisigAddress || '') as string
+  const id = (router.query.id || '') as string
   const { walletAddress, signingClient } = useSigningClient()
   const [transactionHash, setTransactionHash] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [proposalID, setProposalID] = useState('')
   const [proposalForm, setProposalForm] = useState(options[0])
+  const [formData, setFormData] = useState({})
+
+  useEffect(() => {
+    if (id && signingClient) {
+      signingClient
+        .queryContractSmart(multisigAddress, {
+          proposal: { proposal_id: parseInt(id) },
+        })
+        .then((proposal) => {
+          const { title, description, msgs } = proposal
+          const formKey = msgs.some((msg: any) => 'wasm' in msg)
+            ? 'custom-contract-execute'
+            : 'custom-stargate-execute'
+          const option = options.find((o) => o.value === formKey)
+          setProposalForm(option)
+          setFormData({
+            title,
+            description,
+            messages: JSON.stringify(parseJSONRecursive(msgs), null, 2),
+          })
+        })
+    }
+  }, [id, signingClient])
 
   const form = forms.find((item) => item.key === proposalForm.value)
 
-  // const handleSubmit = (event: FormEvent<ProposalFormElement>) => {
-  //   event.preventDefault()
   const createProposal = (msg: any) => {
     setLoading(true)
     setError('')
@@ -87,6 +107,8 @@ const ProposalCreate: NextPage = () => {
             />
 
             <Form
+              disabled={loading}
+              formData={formData}
               readonly={complete}
               widgets={widgets}
               schema={form.schema.schema}
@@ -94,7 +116,7 @@ const ProposalCreate: NextPage = () => {
               uiSchema={form.schema.uiSchema}
               onSubmit={({ formData }) => {
                 const proposal = form.processData(formData)
-                if (proposal) {
+                if (validateJsonSendMsg(proposal)) {
                   createProposal(proposal)
                 }
               }}

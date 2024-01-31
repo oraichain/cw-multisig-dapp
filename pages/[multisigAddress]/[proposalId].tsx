@@ -4,7 +4,7 @@ import { useSigningClient } from 'contexts/cosmwasm'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
-import { VoteInfo, ProposalResponse } from 'types/cw3'
+import { ProposalResponse } from 'types/cw3'
 import JsonHighlight from 'components/JsonHighlight'
 import { parseJSONRecursive } from 'util/json'
 
@@ -144,6 +144,12 @@ const Proposal: NextPage = () => {
       })
   }
 
+  const handleUseTemplate = () => {
+    router.push(
+      `/${encodeURIComponent(multisigAddress)}/create?id=${proposalId}`
+    )
+  }
+
   const handleExecute = async () => {
     setError('')
     signingClient
@@ -242,6 +248,14 @@ const Proposal: NextPage = () => {
                   >
                     {'< Proposals'}
                   </button>
+                  {proposal.status === 'executed' && (
+                    <button
+                      className="box-border px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
+                      onClick={handleUseTemplate}
+                    >
+                      Use as template
+                    </button>
+                  )}
                   {proposal.status === 'passed' && (
                     <button
                       className="box-border px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
