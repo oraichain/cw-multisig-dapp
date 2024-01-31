@@ -22,17 +22,6 @@ interface FormElements extends HTMLFormControlsCollection {
   json: HTMLInputElement
 }
 
-function validateJsonSendMsg(json: any) {
-  if (json === undefined) return false
-  if (typeof json !== 'object') {
-    return false
-  }
-  if (!Array.isArray(json)) {
-    return false
-  }
-  return true
-}
-
 const ProposalCreate: NextPage = () => {
   const router = useRouter()
   const multisigAddress = (router.query.multisigAddress || '') as string
@@ -116,7 +105,7 @@ const ProposalCreate: NextPage = () => {
               uiSchema={form.schema.uiSchema}
               onSubmit={({ formData }) => {
                 const proposal = form.processData(formData)
-                if (validateJsonSendMsg(proposal)) {
+                if (proposal) {
                   createProposal(proposal)
                 }
               }}
