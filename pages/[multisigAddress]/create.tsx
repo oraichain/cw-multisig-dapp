@@ -31,11 +31,13 @@ const ProposalCreate: NextPage = () => {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [proposalID, setProposalID] = useState('')
-  const [proposalForm, setProposalForm] = useState(options[0])
+  const [proposalForm, setProposalForm] = useState(null)
   const [formData, setFormData] = useState({})
 
   useEffect(() => {
-    if (id && signingClient) {
+    if (!signingClient) return
+
+    if (id) {
       signingClient
         .queryContractSmart(multisigAddress, {
           proposal: { proposal_id: parseInt(id) },
@@ -53,10 +55,13 @@ const ProposalCreate: NextPage = () => {
             messages: JSON.stringify(parseJSONRecursive(msgs), null, 2),
           })
         })
+    } else {
+      setProposalForm(options[0])
     }
   }, [id, signingClient])
 
-  const form = forms.find((item) => item.key === proposalForm.value)
+  const form =
+    proposalForm && forms.find((item) => item.key === proposalForm.value)
 
   const createProposal = (msg: any) => {
     setLoading(true)
@@ -87,29 +92,33 @@ const ProposalCreate: NextPage = () => {
       <div className="flex flex-col w-full">
         <div className="grid bg-base-100 place-items-center">
           <div className="text-left container mx-auto max-w-lg">
-            <Select
-              options={options}
-              value={proposalForm}
-              classNamePrefix="react-select"
-              className="my-8 shadow-sm text-lg rounded-full form-select"
-              onChange={setProposalForm}
-            />
+            {proposalForm && (
+              <Select
+                options={options}
+                value={proposalForm}
+                classNamePrefix="react-select"
+                className="my-8 shadow-sm text-lg rounded-full form-select"
+                onChange={setProposalForm}
+              />
+            )}
 
-            <Form
-              disabled={loading}
-              formData={formData}
-              readonly={complete}
-              widgets={widgets}
-              schema={form.schema.schema}
-              validator={validator}
-              uiSchema={form.schema.uiSchema}
-              onSubmit={({ formData }) => {
-                const proposal = form.processData(formData)
-                if (proposal) {
-                  createProposal(proposal)
-                }
-              }}
-            />
+            {form && (
+              <Form
+                disabled={loading}
+                formData={formData}
+                readonly={complete}
+                widgets={widgets}
+                schema={form.schema.schema}
+                validator={validator}
+                uiSchema={form.schema.uiSchema}
+                onSubmit={({ formData }) => {
+                  const proposal = form.processData(formData)
+                  if (proposal) {
+                    createProposal(proposal)
+                  }
+                }}
+              />
+            )}
           </div>
 
           {error && (
