@@ -1,29 +1,23 @@
 import React from 'react'
 import ReactCodeMirror from '@uiw/react-codemirror'
+import { linter } from '@codemirror/lint'
 import { EditorView } from '@codemirror/view'
-import { json } from '@codemirror/lang-json'
 import beautify from 'json-beautify-fix'
+import { json, jsonParseLinter } from '@codemirror/lang-json'
 
 const JsonEditorWidget = (props) => {
-  const placeholder = beautify(JSON.parse(props.placeholder), null, 2)
-
+  const { onChange, value, placeholder, readonly } = props
   return (
     <ReactCodeMirror
       className="max-w-lg"
-      value={props.value}
-      extensions={[json(), EditorView.lineWrapping]}
+      extensions={[json(), linter(jsonParseLinter()), EditorView.lineWrapping]}
       editable
       theme="dark"
-      onChange={(val) => {
-        try {
-          const obj = JSON.parse(val)
-          props.onChange(beautify(obj, null, 2))
-        } catch {
-          props.onChange(val)
-        }
-      }}
-      placeholder={placeholder}
       style={{ height: '100%' }}
+      value={value}
+      placeholder={beautify(JSON.parse(placeholder), null, 2)}
+      readOnly={readonly}
+      onChange={onChange}
     />
   )
 }

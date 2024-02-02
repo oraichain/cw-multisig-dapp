@@ -112,9 +112,14 @@ const ProposalCreate: NextPage = () => {
                 validator={validator}
                 uiSchema={form.schema.uiSchema}
                 onSubmit={({ formData }) => {
-                  const proposal = form.processData(formData)
-                  if (proposal) {
-                    createProposal(proposal)
+                  setFormData(formData)
+                  try {
+                    const proposal = form.processData(formData)
+                    if (proposal) {
+                      createProposal(proposal)
+                    }
+                  } catch (ex) {
+                    setError(ex.toString())
                   }
                 }}
               />
