@@ -2,7 +2,6 @@ import React from 'react'
 import ReactCodeMirror from '@uiw/react-codemirror'
 import { linter } from '@codemirror/lint'
 import { EditorView } from '@codemirror/view'
-import beautify from 'json-beautify-fix'
 import { json, jsonParseLinter } from '@codemirror/lang-json'
 
 const JsonEditorWidget = (props) => {
@@ -15,7 +14,7 @@ const JsonEditorWidget = (props) => {
       theme="dark"
       style={{ height: '100%' }}
       value={value}
-      placeholder={beautify(JSON.parse(placeholder), null, 2)}
+      placeholder={JSON.stringify(JSON.parse(placeholder), null, 2)}
       readOnly={readonly}
       onChange={onChange}
     />

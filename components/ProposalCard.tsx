@@ -90,9 +90,11 @@ export default function ProposalCard({
   return (
     <Link href={`/${encodeURIComponent(multisigAddress)}/${id}`}>
       <div className={`card shadow-lg mb-4`} title={`Expires at ${expires_at}`}>
-        <div className="card-body py-4 px-8">
-          <div className="card-title flex flex-row justify-between m-0">
-            <div>{title}</div>
+        <div className="card-body py-4 px-2">
+          <div className="text-md flex flex-row justify-between m-0">
+            <div>
+              {id} - {title}
+            </div>
             {status === 'passed' && (
               <div className="text-2xl text-warning">{icons.warning}</div>
             )}
