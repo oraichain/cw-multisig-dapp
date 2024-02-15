@@ -21,6 +21,11 @@ function WalletLoader({
     if (walletAddress.length === 0) {
       connectWallet()
     }
+
+    window.addEventListener('keplr_keystorechange', connectWallet)
+    return () => {
+      window.removeEventListener('keplr_keystorechange', connectWallet)
+    }
   }, [])
 
   if (loading || clientLoading) {

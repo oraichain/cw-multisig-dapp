@@ -25,7 +25,7 @@ export const connectKeplr = async () => {
   } else {
     if (window.keplr.experimentalSuggestChain) {
       const stakingDenom = convertFromMicroDenom(
-        process.env.NEXT_PUBLIC_STAKING_DENOM || 'ustars'
+        process.env.NEXT_PUBLIC_STAKING_DENOM || 'orai'
       )
 
       try {
