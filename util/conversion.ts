@@ -1,7 +1,7 @@
 import { Registry } from '@cosmjs/proto-signing'
 import { TextProposal } from 'cosmjs-types/cosmos/gov/v1beta1/gov'
 import { defaultRegistryTypes as defaultStargateTypes } from '@cosmjs/stargate'
-import { JsonObject, fromBinary } from '@cosmjs/cosmwasm-stargate'
+import { JsonObject, fromBinary, wasmTypes } from '@cosmjs/cosmwasm-stargate'
 
 const truncDecimals = 6
 const atomic = 10 ** truncDecimals
@@ -60,7 +60,10 @@ export const zeroStakingCoin = {
   denom: process.env.NEXT_PUBLIC_STAKING_DENOM || 'orai',
 }
 
-export const customRegistry = new Registry(defaultStargateTypes)
+export const customRegistry = new Registry([
+  ...defaultStargateTypes,
+  ...wasmTypes,
+])
 customRegistry.register('/cosmos.gov.v1beta1.TextProposal', TextProposal)
 
 export const encodeProto = (obj: any) => {
