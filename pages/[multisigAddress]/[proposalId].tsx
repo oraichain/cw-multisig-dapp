@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { ProposalResponse } from 'types/cw3'
-import { parseJSONRecursive } from 'util/json'
 import ReactCodeMirror, { EditorView } from '@uiw/react-codemirror'
 import { json } from '@codemirror/lang-json'
+import { decodeProto } from 'util/conversion'
 
 function VoteButtons({
   onVoteYes = () => {},
@@ -215,11 +215,7 @@ const Proposal: NextPage = () => {
                   extensions={[json(), EditorView.lineWrapping]}
                   theme="dark"
                   style={{ height: '100%' }}
-                  value={JSON.stringify(
-                    parseJSONRecursive(proposal.msgs),
-                    null,
-                    2
-                  )}
+                  value={JSON.stringify(decodeProto(proposal.msgs), null, 2)}
                   readOnly
                 />
               </div>

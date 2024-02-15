@@ -1,6 +1,7 @@
 import { Registry } from '@cosmjs/proto-signing'
 import { TextProposal } from 'cosmjs-types/cosmos/gov/v1beta1/gov'
 import { defaultRegistryTypes as defaultStargateTypes } from '@cosmjs/stargate'
+import { JsonObject, fromBinary } from '@cosmjs/cosmwasm-stargate'
 
 const truncDecimals = 6
 const atomic = 10 ** truncDecimals
@@ -62,7 +63,7 @@ export const zeroStakingCoin = {
 export const customRegistry = new Registry(defaultStargateTypes)
 customRegistry.register('/cosmos.gov.v1beta1.TextProposal', TextProposal)
 
-export const encodeProto = (obj) => {
+export const encodeProto = (obj: any) => {
   if (typeof obj !== 'object') return obj
   if (obj.type_url) {
     if (typeof obj.value === 'object') {
@@ -83,4 +84,21 @@ export const encodeProto = (obj) => {
     }
   }
   return obj
+}
+
+export const decodeProto = (value: JsonObject) => {
+  const typeUrl = value.type_url || value.typeUrl
+  if (typeUrl) {
+    // decode proto
+    return decodeProto(customRegistry.decode({ typeUrl, value: value.value }))
+  }
+  for (const k in value) {
+    if (typeof value[k] === 'string') {
+      try {
+        value[k] = fromBinary(value[k])
+      } catch {}
+    }
+    if (typeof value[k] === 'object') decodeProto(value[k])
+  }
+  return value
 }

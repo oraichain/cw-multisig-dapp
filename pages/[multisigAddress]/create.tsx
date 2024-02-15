@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import widgets from 'components/widgets'
 import FormFactory from 'components/ProposalForms/FormFactory'
-import { parseJSONRecursive } from 'util/json'
+import { decodeProto } from 'util/conversion'
 
 const forms = FormFactory.Keys.map((value) => FormFactory.createForm(value))
 const options = forms.map(({ key, title }) => ({ value: key, label: title }))
@@ -52,7 +52,7 @@ const ProposalCreate: NextPage = () => {
           setFormData({
             title,
             description,
-            messages: JSON.stringify(parseJSONRecursive(msgs), null, 2),
+            messages: JSON.stringify(decodeProto(msgs), null, 2),
           })
         })
     } else {
