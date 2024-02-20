@@ -6,8 +6,11 @@ import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
 import { ProposalResponse } from 'types/cw3'
 import ReactCodeMirror, { EditorView } from '@uiw/react-codemirror'
-import { json } from '@codemirror/lang-json'
+import widgets from 'components/widgets'
+import { json, jsonParseLinter } from '@codemirror/lang-json'
+import { linter } from '@codemirror/lint'
 import { decodeProto } from 'util/conversion'
+import { ExecuteInstruction } from '@cosmjs/cosmwasm-stargate'
 
 function VoteButtons({
   onVoteYes = () => {},
@@ -92,7 +95,7 @@ const Proposal: NextPage = () => {
   const proposalId = router.query.proposalId as string
 
   const { walletAddress, signingClient } = useSigningClient()
-
+  const [customMsg, setCustomMsg] = useState('[]')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [proposal, setProposal] = useState<ProposalResponse | null>(null)
@@ -153,23 +156,43 @@ const Proposal: NextPage = () => {
 
   const handleExecute = async () => {
     setError('')
-    signingClient
-      ?.execute(
-        walletAddress,
-        multisigAddress,
-        {
-          execute: { proposal_id: parseInt(proposalId) },
-        },
-        'auto'
-      )
-      .then((response) => {
-        setTimestamp(new Date())
-        setTransactionHash(response.transactionHash)
-      })
-      .catch((err) => {
-        setLoading(false)
-        setError(err.message)
-      })
+    try {
+      let executeInstructions: ExecuteInstruction[]
+      try {
+        executeInstructions = JSON.parse(customMsg)
+      } catch {
+        executeInstructions = []
+      }
+
+      const response = executeInstructions.length
+        ? await signingClient?.executeMultiple(
+            walletAddress,
+            [
+              {
+                contractAddress: multisigAddress,
+                msg: {
+                  execute: { proposal_id: parseInt(proposalId) },
+                },
+              },
+              ...executeInstructions,
+            ],
+            'auto'
+          )
+        : await signingClient?.execute(
+            walletAddress,
+            multisigAddress,
+            {
+              execute: { proposal_id: parseInt(proposalId) },
+            },
+            'auto'
+          )
+
+      setTimestamp(new Date())
+      setTransactionHash(response.transactionHash)
+    } catch (err) {
+      setLoading(false)
+      setError(err.message)
+    }
   }
 
   const handleClose = async () => {
@@ -242,6 +265,16 @@ const Proposal: NextPage = () => {
                     variant="success"
                     link={`https://oraiscan.io/Oraichain/tx/${transactionHash}`}
                     msg={`Success! Transaction Hash: ${transactionHash}`}
+                  />
+                </div>
+              )}
+
+              {proposal.status === 'passed' && (
+                <div className="flex justify-between flex-col content-center my-8">
+                  <h4 className="mb-2">Execute Instructions:</h4>
+                  <widgets.jsoneditor
+                    value={customMsg}
+                    onChange={setCustomMsg}
                   />
                 </div>
               )}
