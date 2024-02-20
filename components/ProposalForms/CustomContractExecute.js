@@ -48,14 +48,17 @@ export default class CustomContractExecute extends GenericForm {
     }
     this.processData = ({ title, description, messages }) => {
       const messagesObject = JSON.parse(messages)
-      const msgs = messagesObject.map((message) => ({
-        wasm: {
-          execute: {
-            ...message.wasm.execute,
-            msg: toBinary(message.wasm.execute.msg),
+      const msgs = messagesObject.map((message) => {
+        const method = Object.keys(message.wasm)[0]
+        return {
+          wasm: {
+            [method]: {
+              ...message.wasm[method],
+              msg: toBinary(message.wasm[method].msg),
+            },
           },
-        },
-      }))
+        }
+      })
       return { title, description, msgs }
     }
   }
