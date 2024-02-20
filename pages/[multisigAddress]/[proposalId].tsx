@@ -159,33 +159,31 @@ const Proposal: NextPage = () => {
     try {
       let executeInstructions: ExecuteInstruction[]
       try {
-        executeInstructions = JSON.parse(customMsg)
+        executeInstructions = JSON.parse(customMsg).map(({ wasm }) => {
+          const { contract_addr: contractAddress, msg, funds } = wasm.execute
+          return {
+            contractAddress,
+            msg,
+            funds,
+          } as ExecuteInstruction
+        })
       } catch {
         executeInstructions = []
       }
 
-      const response = executeInstructions.length
-        ? await signingClient?.executeMultiple(
-            walletAddress,
-            [
-              {
-                contractAddress: multisigAddress,
-                msg: {
-                  execute: { proposal_id: parseInt(proposalId) },
-                },
-              },
-              ...executeInstructions,
-            ],
-            'auto'
-          )
-        : await signingClient?.execute(
-            walletAddress,
-            multisigAddress,
-            {
-              execute: { proposal_id: parseInt(proposalId) },
-            },
-            'auto'
-          )
+      // run execute first
+      executeInstructions.unshift({
+        contractAddress: multisigAddress,
+        msg: {
+          execute: { proposal_id: parseInt(proposalId) },
+        },
+      })
+
+      const response = await signingClient?.executeMultiple(
+        walletAddress,
+        executeInstructions,
+        'auto'
+      )
 
       setTimestamp(new Date())
       setTransactionHash(response.transactionHash)
@@ -271,7 +269,7 @@ const Proposal: NextPage = () => {
 
               {proposal.status === 'passed' && (
                 <div className="flex justify-between flex-col content-center my-8">
-                  <h4 className="mb-2">Execute Instructions:</h4>
+                  <h4 className="mb-2">Custom execute messages:</h4>
                   <widgets.jsoneditor
                     value={customMsg}
                     onChange={setCustomMsg}
