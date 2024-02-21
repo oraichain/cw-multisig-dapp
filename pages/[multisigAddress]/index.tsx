@@ -97,6 +97,7 @@ const Home: NextPage = () => {
         <div className="w-full">
           {members.map((member) => (
             <a
+              key={member.addr}
               href={`https://oraiscan.io/${PUBLIC_CHAIN_ID}/account/${member.addr}`}
               target="_blank"
             >

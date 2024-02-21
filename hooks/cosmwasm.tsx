@@ -1,7 +1,33 @@
 import { useState } from 'react'
 import { connectKeplr } from 'services/keplr'
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc'
+import {
+  CosmWasmClient,
+  SigningCosmWasmClient,
+} from '@cosmjs/cosmwasm-stargate'
 import { GasPrice } from '@cosmjs/stargate'
+
+const getStatus = Tendermint34Client.prototype.status
+
+CosmWasmClient.prototype.getHeight = async function () {
+  const status = await getStatus.call(this.tmClient)
+  return status.syncInfo.latestBlockHeight
+}
+
+// @ts-ignore
+Tendermint34Client.detectVersion = Tendermint37Client.detectVersion = () => {}
+// @ts-ignore
+Tendermint34Client.prototype.status = Tendermint37Client.prototype.status =
+  () => {
+    return {
+      nodeInfo: {
+        network: PUBLIC_CHAIN_ID,
+        version: '',
+      },
+      syncInfo: { latestBlockHeight: 0 },
+    }
+  }
+
 export interface ISigningCosmWasmClientContext {
   walletAddress: string
   signingClient: SigningCosmWasmClient | null
