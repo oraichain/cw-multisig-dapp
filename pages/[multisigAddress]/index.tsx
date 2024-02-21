@@ -5,16 +5,22 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import ProposalCard from 'components/ProposalCard'
 import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3'
+import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm'
 
 // TODO: review union Expiration from types/cw3
 type Expiration = {
   at_height: number
 }
 
+type Member = {
+  addr: string
+  weight: number
+}
+
 const Home: NextPage = () => {
   const router = useRouter()
   const multisigAddress = router.query.multisigAddress as string
-
+  const [members, setMembers] = useState<Member[]>([])
   const { walletAddress, signingClient } = useSigningClient()
   const [reversedProposals, setReversedProposals] = useState<
     ProposalResponse[]
@@ -38,19 +44,43 @@ const Home: NextPage = () => {
     }
     signingClient.getHeight().then(setBlockHeight)
     setLoading(true)
-    signingClient
-      .queryContractSmart(multisigAddress, {
+    Promise.all([
+      signingClient.queryContractSmart(multisigAddress, {
         reverse_proposals: {
           ...(startBefore && { start_before: startBefore }),
           limit: 10,
         },
-      })
-      .then((response: ProposalListResponse) => {
-        if (response.proposals.length < 10) {
-          setHideLoadMore(true)
+      }),
+      signingClient.queryContractSmart(multisigAddress, {
+        config: {},
+      }),
+    ])
+      .then(
+        ([response, config]: [
+          ProposalListResponse,
+          { group_addr: string }
+        ]) => {
+          if (response.proposals.length < 10) {
+            setHideLoadMore(true)
+          }
+          setReversedProposals([
+            ...new Map(
+              reversedProposals.concat(response.proposals).map((p) => [p.id, p])
+            ).values(),
+          ])
+
+          signingClient
+            .queryContractSmart(config.group_addr, {
+              list_members: {},
+            })
+            .then((data) => {
+              setMembers(data.members)
+            })
+            .catch((err) => {
+              console.log('err', err)
+            })
         }
-        setReversedProposals(reversedProposals.concat(response.proposals))
-      })
+      )
       .then(() => setLoading(false))
       .catch((err) => {
         setLoading(false)
@@ -60,6 +90,28 @@ const Home: NextPage = () => {
 
   return (
     <WalletLoader loading={reversedProposals.length === 0 && loading}>
+      <div className="flex flex-col w-96 lg:w-6/12 max-w-full px-2 py-4">
+        <h1 className="text-left text-lg font-bold sm:text-3xl">
+          Weight - Members
+        </h1>
+        <div className="w-full">
+          {members.map((member) => (
+            <a
+              href={`https://oraiscan.io/${PUBLIC_CHAIN_ID}/account/${member.addr}`}
+              target="_blank"
+            >
+              <div className={`card shadow-lg mb-4`}>
+                <div className="card-body py-4 px-2">
+                  <div className="text-md flex flex-row justify-between m-0">
+                    {member.weight} - {member.addr}
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
       <div className="flex flex-col w-96 lg:w-6/12 max-w-full px-2 py-4">
         <div className="flex flex-row justify-between items-center mb-4">
           <h1 className="text-lg font-bold sm:text-3xl">ID - Proposals</h1>
