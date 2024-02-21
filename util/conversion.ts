@@ -101,7 +101,7 @@ export const decodeProto = (value: JsonObject) => {
         value[k] = fromBinary(value[k])
       } catch {}
     }
-    if (typeof value[k] === 'object') decodeProto(value[k])
+    if (typeof value[k] === 'object') value[k] = decodeProto(value[k])
   }
   return value
 }

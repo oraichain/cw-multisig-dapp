@@ -44,10 +44,9 @@ const ProposalCreate: NextPage = () => {
         })
         .then((proposal) => {
           const { title, description, msgs } = proposal
-          const formKey = msgs.some((msg: any) => 'wasm' in msg)
-            ? 'custom-contract-execute'
-            : 'custom-stargate-execute'
-          const option = options.find((o) => o.value === formKey)
+          const option = options.find(
+            (o) => o.value === 'custom-contract-execute'
+          )
           setProposalForm(option)
           setFormData({
             title,
