@@ -115,14 +115,16 @@ const Home: NextPage = () => {
       <div className="flex flex-col w-96 lg:w-6/12 max-w-full px-2 py-4">
         <div className="flex flex-row justify-between items-center mb-4">
           <h1 className="text-lg font-bold sm:text-3xl">ID - Proposals</h1>
-          <button
-            className="btn btn-primary btn-sm text-lg"
-            onClick={() =>
-              router.push(`/${encodeURIComponent(multisigAddress)}/create`)
-            }
-          >
-            + Create
-          </button>
+          {members.some((m) => m.addr === walletAddress) && (
+            <button
+              className="btn btn-primary btn-sm text-lg"
+              onClick={() =>
+                router.push(`/${encodeURIComponent(multisigAddress)}/create`)
+              }
+            >
+              + Create
+            </button>
+          )}
         </div>
       </div>
       <div className="w-96 lg:w-6/12 max-w-full">

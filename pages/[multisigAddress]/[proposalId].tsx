@@ -269,7 +269,7 @@ const Proposal: NextPage = () => {
 
               {proposal.status === 'passed' && (
                 <div className="flex justify-between flex-col content-center my-8">
-                  <h4 className="mb-2">Custom execute messages:</h4>
+                  <h4 className="mb-2">Execute custom messages:</h4>
                   <widgets.jsoneditor
                     value={customMsg}
                     onChange={setCustomMsg}
