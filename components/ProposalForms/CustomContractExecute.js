@@ -52,6 +52,9 @@ export default class CustomContractExecute extends GenericForm {
         messagesObjects = [messagesObjects]
       }
       const msgs = messagesObjects.map((message) => {
+        // default message
+        if (!message.wasm) return message
+        // fix wasm message
         const method = Object.keys(message.wasm)[0]
         return {
           wasm: {
