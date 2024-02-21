@@ -24,7 +24,6 @@ Tendermint34Client.prototype.status = Tendermint37Client.prototype.status =
         network: PUBLIC_CHAIN_ID,
         version: '',
       },
-      syncInfo: { latestBlockHeight: 0 },
     }
   }
 
