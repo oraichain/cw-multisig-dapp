@@ -159,7 +159,11 @@ const Proposal: NextPage = () => {
     try {
       let executeInstructions: ExecuteInstruction[]
       try {
-        executeInstructions = JSON.parse(customMsg).map(({ wasm }) => {
+        let customMsgObjects = JSON.parse(customMsg)
+        if (!Array.isArray(customMsgObjects)) {
+          customMsgObjects = [customMsgObjects]
+        }
+        executeInstructions = customMsgObjects.map(({ wasm }) => {
           const { contract_addr: contractAddress, msg, funds } = wasm.execute
           return {
             contractAddress,
