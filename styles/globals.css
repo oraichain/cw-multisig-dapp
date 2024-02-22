@@ -76,6 +76,11 @@ nav .text-2xl{
     border-radius: var(--rounded-btn,.5rem);  
 }
 
+.form-select .react-select__input-container {
+    --tw-text-opacity: 1;
+    color: hsla(var(--bc) / var(--tw-text-opacity));
+}
+
 .form-select .react-select__single-value {
     --tw-text-opacity: 1;
     color: hsla(var(--bc) / var(--tw-text-opacity));
