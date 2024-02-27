@@ -13,7 +13,7 @@ import widgets from 'components/widgets'
 import FormFactory from 'components/ProposalForms/FormFactory'
 import { decodeProto } from 'util/conversion'
 
-const forms = FormFactory.Keys.map((value) => FormFactory.createForm(value))
+const forms = FormFactory.Items.map((value) => FormFactory.createForm(value))
 const options = forms.map(({ key, title }) => ({ value: key, label: title }))
 
 interface FormElements extends HTMLFormControlsCollection {
@@ -107,9 +107,7 @@ const ProposalCreate: NextPage = () => {
                 formData={formData}
                 readonly={complete}
                 widgets={widgets}
-                schema={form.schema.schema}
                 validator={validator}
-                uiSchema={form.schema.uiSchema}
                 onSubmit={({ formData }) => {
                   setFormData(formData)
                   try {
@@ -121,6 +119,7 @@ const ProposalCreate: NextPage = () => {
                     setError(ex.toString())
                   }
                 }}
+                {...form.props}
               />
             )}
           </div>
