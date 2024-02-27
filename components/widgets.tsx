@@ -6,12 +6,11 @@ import { json, jsonParseLinter } from '@codemirror/lang-json'
 
 const JsonEditorWidget = (props) => {
   const { onChange, value, readonly, style } = props
-  let placeholder
+  let placeholder = {}
   try {
-    placeholder = JSON.parse(placeholder)
-  } catch {
-    placeholder = {}
-  }
+    placeholder = JSON.parse(props.placeholder)
+  } catch {}
+
   return (
     <ReactCodeMirror
       className="max-w-lg"
