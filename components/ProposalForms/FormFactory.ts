@@ -18,7 +18,7 @@ export type FormKeyPair = {
 
 export default class FormFactory {
   static createForm(value: FormKeyPair) {
-    return { ...new value.className(value.key) }
+    return new value.className(value.key)
   }
 
   static Items: FormKeyPair[] = [
