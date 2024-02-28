@@ -1,26 +1,20 @@
 // @ts-nocheck
 
-import type { NextPage } from 'next'
-import WalletLoader from 'components/WalletLoader'
-import Select from 'react-select'
 import Form from '@rjsf/core'
-import { useSigningClient } from 'contexts/cosmwasm'
 import validator from '@rjsf/validator-ajv8'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import LineAlert from 'components/LineAlert'
-import widgets from 'components/widgets'
 import FormFactory from 'components/ProposalForms/FormFactory'
+import WalletLoader from 'components/WalletLoader'
+import widgets from 'components/widgets'
+import { useSigningClient } from 'contexts/cosmwasm'
+import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import Select from 'react-select'
 import { decodeProto } from 'util/conversion'
 
 const forms = FormFactory.Items.map((value) => FormFactory.createForm(value))
 const options = forms.map(({ key, title }) => ({ value: key, label: title }))
-
-interface FormElements extends HTMLFormControlsCollection {
-  label: HTMLInputElement
-  description: HTMLInputElement
-  json: HTMLInputElement
-}
 
 const ProposalCreate: NextPage = () => {
   const router = useRouter()
