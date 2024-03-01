@@ -22,7 +22,7 @@ export default class MigrateContract extends GenericForm {
       },
     }
     const schema = {
-      required: ['contract_addr', 'new_code_id', 'message'],
+      required: ['contract_addr', 'new_code_id'],
       properties: {
         contract_addr: {
           type: 'string',
@@ -44,7 +44,11 @@ export default class MigrateContract extends GenericForm {
     super.init('Migrate A Smart Contract', uiSchema, schema)
   }
 
-  protected override processMessages({ contract_addr, new_code_id, message }) {
+  protected override processMessages({
+    contract_addr,
+    new_code_id,
+    message = '{}', // default message
+  }) {
     const msgs = [
       {
         wasm: {
