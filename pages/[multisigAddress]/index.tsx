@@ -101,9 +101,9 @@ const Home: NextPage = () => {
               href={`https://oraiscan.io/${PUBLIC_CHAIN_ID}/account/${member.addr}`}
               target="_blank"
             >
-              <div className={`card shadow-lg mb-4`}>
+              <div className={`card mb-4`}>
                 <div className="card-body py-4 px-2">
-                  <div className="text-md flex flex-row justify-between m-0">
+                  <div className="text-md truncate m-0">
                     {member.weight} - {member.addr}
                   </div>
                 </div>
