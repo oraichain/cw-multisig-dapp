@@ -26,7 +26,7 @@ export default class GenericForm<
       },
       schema: {
         type: 'object',
-        required: ['title', 'description'],
+        required: ['title'],
         properties: {
           title: {
             type: 'string',
@@ -62,7 +62,7 @@ export default class GenericForm<
     return data
   }
 
-  public processData({ title, description, ...data }) {
+  public processData({ title, description = '', ...data }) {
     try {
       const msgs = this.processMessages(data)
       return { title, description, msgs }
