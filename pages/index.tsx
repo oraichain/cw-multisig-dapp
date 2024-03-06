@@ -1,21 +1,13 @@
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/cosmwasm'
-import { MULTISIG_CODE_ID } from 'hooks/cosmwasm'
 import Link from 'next/link'
 
+const contracts = (process.env.NEXT_PUBLIC_CONTRACTS || '').split(/\s+/)
 const Home: NextPage = () => {
   const router = useRouter()
   const [address, setAddress] = useState('')
-  const [contracts, setContracts] = useState<readonly string[]>([])
-  const { signingClient } = useSigningClient()
-
-  useEffect(() => {
-    if (!signingClient) return
-    signingClient.getContracts(MULTISIG_CODE_ID).then(setContracts)
-  }, [signingClient])
 
   if (router.asPath !== router.route && router.route === '/') {
     router.push(router.asPath)
@@ -65,18 +57,20 @@ const Home: NextPage = () => {
         </div>
 
         <div className="divider p-8 before:bg-secondary after:bg-secondary before:h-[1px] after:h-[1px]"></div>
-        <div className="grid bg-base-100 place-items-center">
-          <h1 className="text-4xl font-bold mb-8">Existing...</h1>
-          {contracts.map((contract) => (
-            <Link
-              key={contract}
-              href={`/${encodeURIComponent(contract)}`}
-              className="block btn btn-link btn-primary w-full max-w-full truncate lowercase"
-            >
-              {contract}
-            </Link>
-          ))}
-        </div>
+        {contracts.length && (
+          <div className="grid bg-base-100 place-items-center">
+            <h1 className="text-4xl font-bold mb-8">Existing...</h1>
+            {contracts.map((contract) => (
+              <Link
+                key={contract}
+                href={`/${encodeURIComponent(contract)}`}
+                className="block btn btn-link btn-primary w-full max-w-full truncate lowercase"
+              >
+                {contract}
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </WalletLoader>
   )
