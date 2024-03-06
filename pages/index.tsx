@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import WalletLoader from 'components/WalletLoader'
 import Link from 'next/link'
 
-const contracts = (process.env.NEXT_PUBLIC_CONTRACTS || '').split(/\s+/)
+const contracts = (process.env.NEXT_PUBLIC_CONTRACTS || '').split(/\s*,\s*/)
 const Home: NextPage = () => {
   const router = useRouter()
   const [address, setAddress] = useState('')
