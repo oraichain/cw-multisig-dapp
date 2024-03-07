@@ -26,6 +26,9 @@ const start = async () => {
     bech32Prefix: 'orai',
   });
 
+  // snapshot height
+  client.app.height = 16076464;
+
   await downloadState.loadState(client, senderAddress, groupAddr, 'group');
   await downloadState.loadState(
     client,
@@ -33,6 +36,10 @@ const start = async () => {
     multisigAddr,
     'multisig'
   );
+
+  client.app.bank.setBalance(multisigAddr, [
+    { denom: 'orai', amount: '100000000' },
+  ]);
 
   const multisigClient = new Cw3FlexMultisigClient(
     client,
@@ -44,7 +51,7 @@ const start = async () => {
     startAfter: 360,
   });
 
-  console.log('proposals: ', proposals);
+  // console.log('proposals: ', proposals);
   const config = await multisigClient.config();
   console.log('config: ', config);
 
