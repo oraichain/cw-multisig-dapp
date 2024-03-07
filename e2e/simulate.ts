@@ -3,7 +3,6 @@ import {
   Cw4GroupClient,
 } from '@oraichain/common-contracts-sdk';
 import { SimulateCosmWasmClient, DownloadState } from '@oraichain/cw-simulate';
-import fs from 'fs';
 import path from 'path';
 
 const multisigAddr = 'orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0';
@@ -77,16 +76,40 @@ const start = async () => {
       },
     ],
   });
+  console.dir(res, { depth: null });
+
+  const member = await group.member({
+    addr: members[1].addr,
+    atHeight: 16076464,
+  });
+  console.log('member: ', member);
 
   const proposalId = Number(
     res.events.flatMap((e) => e.attributes).find((a) => a.key === 'proposal_id')
       .value
   );
 
-  await voters[1].vote({ proposalId: proposalId, vote: 'yes' });
-  await voters[2].vote({ proposalId: proposalId, vote: 'yes' });
+  const unauthorizedExecutor = new Cw3FlexMultisigClient(
+    client,
+    multisigAddr,
+    multisigAddr
+  );
 
-  const result = await voters[0].execute({ proposalId: proposalId });
+  await voters[1].vote({ proposalId, vote: 'yes' });
+  try {
+    await unauthorizedExecutor.vote({ proposalId, vote: 'yes' });
+  } catch (error) {
+    console.log('should receive error');
+    console.log({ error });
+  }
+  await voters[2].vote({ proposalId, vote: 'yes' });
+  try {
+    await unauthorizedExecutor.execute({ proposalId });
+  } catch (error) {
+    console.log({ error });
+  }
+
+  const result = await voters[2].execute({ proposalId });
   console.log({ result });
 };
 
