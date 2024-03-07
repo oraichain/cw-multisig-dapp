@@ -1,4 +1,7 @@
-import { Cw3FlexMultisigClient } from '@oraichain/common-contracts-sdk'
+import {
+  Cw3FlexMultisigClient,
+  Cw4GroupClient,
+} from '@oraichain/common-contracts-sdk'
 import { SimulateCosmWasmClient, DownloadState } from '@oraichain/cw-simulate'
 import fs from 'fs'
 import path from 'path'
@@ -39,23 +42,15 @@ const start = async () => {
   const config = await multisigClient.config()
   console.log('config: ', config)
 
+  const group = new Cw4GroupClient(client, multisigAddr, groupAddr)
+  const { members } = await group.listMembers({})
+
   // setup 3 voters
-  const voter1 = new Cw3FlexMultisigClient(
-    client,
-    'orai1zm4zwxxtwe44aymcpp9qj94dew63guv58ncrj6',
-    multisigAddr
+  const voters = members.map(
+    ({ addr }) => new Cw3FlexMultisigClient(client, addr, multisigAddr)
   )
-  const voter2 = new Cw3FlexMultisigClient(
-    client,
-    'orai1sukkexujpz2trec6x8t6c3dlngc52c2t5m2q29',
-    multisigAddr
-  )
-  const voter3 = new Cw3FlexMultisigClient(
-    client,
-    'orai14h0n2nlfrfz8tn9usfyjrxqd23fhj9a0ec0pm7',
-    multisigAddr
-  )
-  await voter1.propose({
+
+  await voters[0].propose({
     title: 'bar',
     description: 'foo',
     msgs: [
@@ -69,12 +64,13 @@ const start = async () => {
       },
     ],
   })
-  await voter1.vote({ proposalId: 395, vote: 'yes' })
-  await voter2.vote({ proposalId: 395, vote: 'yes' })
-  await voter3.vote({ proposalId: 395, vote: 'yes' })
 
-  const result = await voter1.execute({ proposalId: 395 })
-  console.log({ result })
+  //   await voter1.vote({ proposalId: 395, vote: 'yes' })
+  //   await voter2.vote({ proposalId: 395, vote: 'yes' })
+  //   await voter3.vote({ proposalId: 395, vote: 'yes' })
+
+  //   const result = await voter1.execute({ proposalId: 395 })
+  //   console.log({ result })
 }
 
 start()
