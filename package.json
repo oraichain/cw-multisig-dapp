@@ -28,7 +28,7 @@
     "@oraichain/common-contracts-sdk": "^1.0.31",
     "@oraichain/cw-simulate": "^2.8.77",
     "@types/lodash.clonedeep": "^4.5.6",
-    "@types/react": "^18.2.6",
+    "@types/react": "^18.2.25",
     "autoprefixer": "^10.3.3",
     "eslint": "7.32.0",
     "eslint-config-next": "11.1.0",
