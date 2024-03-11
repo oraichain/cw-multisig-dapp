@@ -1,13 +1,13 @@
-import type { NextPage } from 'next'
-import { FormEvent } from 'react'
-import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/cosmwasm'
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import LineAlert from 'components/LineAlert'
-import { InstantiateResult } from '@cosmjs/cosmwasm-stargate'
-import { InstantiateMsg } from 'types/cw3'
-import { MULTISIG_CODE_ID } from 'hooks/cosmwasm'
+import type { NextPage } from 'next';
+import { FormEvent } from 'react';
+import WalletLoader from 'components/WalletLoader';
+import { useSigningClient } from 'contexts/cosmwasm';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import LineAlert from 'components/LineAlert';
+import { InstantiateResult } from '@cosmjs/cosmwasm-stargate';
+import { InstantiateMsg } from 'types/cw3';
+import { MULTISIG_CODE_ID } from 'hooks/cosmwasm';
 
 function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   return (
@@ -34,65 +34,72 @@ function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
         />
       </td>
     </tr>
-  )
+  );
 }
 
 function validateNonEmpty(msg: InstantiateMsg, label: string) {
-  const { threshold, max_voting_period, voters } = msg
+  const { threshold, max_voting_period, voters } = msg;
   if (isNaN(threshold.absolute_count.weight) || isNaN(max_voting_period.time)) {
-    return false
+    return false;
   }
   if (label.length === 0) {
-    return false
+    return false;
   }
   // if (
   //   voters.some(({ addr, weight }: Voter) => addr.length === 0 || isNaN(weight))
   // ) {
   //   return false
   // }
-  return true
+  return true;
 }
 
 interface FormElements extends HTMLFormControlsCollection {
-  duration: HTMLInputElement
-  threshold: HTMLInputElement
-  label: HTMLInputElement
-  [key: string]: any
+  duration: HTMLInputElement;
+  threshold: HTMLInputElement;
+  label: HTMLInputElement;
+  [key: string]: any;
 }
 
 interface MultisigFormElement extends HTMLFormElement {
-  readonly elements: FormElements
+  readonly elements: FormElements;
 }
 
 const CreateMultisig: NextPage = () => {
-  const router = useRouter()
-  const { walletAddress, signingClient } = useSigningClient()
-  const [count, setCount] = useState(2)
-  const [contractAddress, setContractAddress] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const { walletAddress, signingClient } = useSigningClient();
+  const [count, setCount] = useState(2);
+  const [contractAddress, setContractAddress] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: FormEvent<MultisigFormElement>) => {
-    event.preventDefault()
-    setError('')
-    setLoading(true)
+    event.preventDefault();
+    // setError('');
+    // setLoading(true);
 
-    const formEl = event.currentTarget as MultisigFormElement
+    const formEl = event.currentTarget as MultisigFormElement;
+
+    const executor =
+      formEl.executor.value === 'none'
+        ? undefined
+        : formEl.executor.value === 'member'
+        ? 'member'
+        : { only: formEl.only.value.trim() };
 
     const voters = [...Array(count)].map((_item, index) => ({
       addr: formEl[`address_${index}`]?.value?.trim(),
       weight: parseInt(formEl[`weight_${index}`]?.value?.trim()),
-    }))
-    const required_weight = parseInt(formEl.threshold.value?.trim())
+    }));
+    const required_weight = parseInt(formEl.threshold.value?.trim());
     const max_voting_period = {
       time: parseInt(formEl.duration.value?.trim()),
-    }
+    };
 
     // instantiate group address
     const groupAddrMsg = {
       admin: walletAddress,
       members: voters,
-    }
+    };
     const result = await signingClient.instantiate(
       walletAddress,
       Number(process.env.NEXT_PUBLIC_CW4_GROUP_CODE_ID),
@@ -100,27 +107,28 @@ const CreateMultisig: NextPage = () => {
       'cw4 group address',
       'auto',
       { admin: walletAddress }
-    )
+    );
 
     const msg = {
       group_addr: result.contractAddress,
       threshold: { absolute_count: { weight: required_weight } },
       max_voting_period,
-    }
+      executor, // {"only":""} | undefined | "member"
+    };
 
-    const label = formEl.label.value.trim()
+    const label = formEl.label.value.trim();
 
     // @ebaker TODO: add more validation
     if (!validateNonEmpty(msg, label)) {
-      setLoading(false)
-      setError('All fields are required.')
-      return
+      setLoading(false);
+      setError('All fields are required.');
+      return;
     }
 
     if (!signingClient) {
-      setLoading(false)
-      setError('Please try reconnecting your wallet.')
-      return
+      setLoading(false);
+      setError('Please try reconnecting your wallet.');
+      return;
     }
 
     signingClient
@@ -128,19 +136,19 @@ const CreateMultisig: NextPage = () => {
         admin: walletAddress,
       })
       .then((response: InstantiateResult) => {
-        setLoading(false)
+        setLoading(false);
         if (response.contractAddress.length > 0) {
-          setContractAddress(response.contractAddress)
+          setContractAddress(response.contractAddress);
         }
       })
       .catch((err: any) => {
-        setLoading(false)
-        console.log('err', err)
-        setError(err.message)
-      })
-  }
+        setLoading(false);
+        console.log('err', err);
+        setError(err.message);
+      });
+  };
 
-  const complete = contractAddress.length > 0
+  const complete = contractAddress.length > 0;
 
   return (
     <WalletLoader>
@@ -166,12 +174,52 @@ const CreateMultisig: NextPage = () => {
                   <button
                     className="btn btn-outline btn-primary btn-md text-md rounded-full"
                     onClick={(e) => {
-                      e.preventDefault()
-                      setCount(count + 1)
+                      e.preventDefault();
+                      setCount(count + 1);
                     }}
                   >
                     + Add another
                   </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table className="w-full my-4">
+            <thead>
+              <tr>
+                <th className="text-left">Executor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="pb-2">
+                  <select
+                    defaultValue="member"
+                    onChange={(e) => {
+                      // @ts-ignore
+                      document.querySelector('#only').style.display =
+                        e.target.value === 'only' ? 'block' : 'none';
+                    }}
+                    name="executor"
+                    className="block box-border m-0 w-full rounded  input input-bordered focus:input-primary"
+                  >
+                    <option value="member">Member</option>
+                    <option value="only">Only</option>
+                    <option value="none">None</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td className="pb-2">
+                  <input
+                    id="only"
+                    className="block box-border m-0 w-full rounded input input-bordered focus:input-primary"
+                    name="only"
+                    style={{ display: 'none' }}
+                    type="text"
+                    placeholder="Only address"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -246,8 +294,8 @@ const CreateMultisig: NextPage = () => {
             <button
               className="mt-4 box-border px-4 py-2 btn btn-primary"
               onClick={(e) => {
-                e.preventDefault()
-                router.push(`/${encodeURIComponent(contractAddress)}`)
+                e.preventDefault();
+                router.push(`/${encodeURIComponent(contractAddress)}`);
               }}
             >
               View Multisig &#8599;
@@ -256,7 +304,7 @@ const CreateMultisig: NextPage = () => {
         )}
       </div>
     </WalletLoader>
-  )
-}
+  );
+};
 
-export default CreateMultisig
+export default CreateMultisig;
