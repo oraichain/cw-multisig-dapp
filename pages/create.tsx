@@ -5,7 +5,6 @@ import { useSigningClient } from 'contexts/cosmwasm';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import LineAlert from 'components/LineAlert';
-import { InstantiateResult } from '@cosmjs/cosmwasm-stargate';
 import { InstantiateMsg } from 'types/cw3';
 import { MULTISIG_CODE_ID } from 'hooks/cosmwasm';
 
@@ -27,7 +26,6 @@ function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
           type="number"
           className="block box-border m-0 w-full rounded input input-bordered focus:input-primary font-mono"
           name={`weight_${idx}`}
-          defaultValue="1"
           min={1}
           max={999}
           readOnly={readOnly}
@@ -68,14 +66,61 @@ const CreateMultisig: NextPage = () => {
   const router = useRouter();
   const { walletAddress, signingClient } = useSigningClient();
   const [count, setCount] = useState(2);
-  const [contractAddress, setContractAddress] = useState('');
+  const [contractAddress, setContractAddress] = useState(
+    'orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0'
+  );
+  const [groupAddress, setGroupAddress] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const handleSubmitGroup = async (event: FormEvent<MultisigFormElement>) => {
+    event.preventDefault();
+    if (!signingClient) {
+      setLoading(false);
+      setError('Please try reconnecting your wallet.');
+      return;
+    }
+
+    const formEl = event.currentTarget as MultisigFormElement;
+
+    const voters = [...Array(count)].map((_item, index) => ({
+      addr: formEl[`address_${index}`]?.value?.trim(),
+      weight: parseInt(formEl[`weight_${index}`]?.value?.trim()),
+    }));
+
+    // instantiate group address
+    const groupAddrMsg = {
+      admin: walletAddress,
+      members: voters,
+    };
+
+    setLoading(true);
+    try {
+      const result = await signingClient.instantiate(
+        walletAddress,
+        Number(process.env.NEXT_PUBLIC_CW4_GROUP_CODE_ID),
+        groupAddrMsg,
+        formEl.groupLabel.value.trim() || 'cw4 group address',
+        'auto',
+        { admin: walletAddress }
+      );
+
+      setGroupAddress(result.contractAddress);
+      setError('');
+    } catch (err) {
+      console.log('err', err);
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
   const handleSubmit = async (event: FormEvent<MultisigFormElement>) => {
     event.preventDefault();
-    // setError('');
-    // setLoading(true);
+    if (!signingClient) {
+      setLoading(false);
+      setError('Please try reconnecting your wallet.');
+      return;
+    }
 
     const formEl = event.currentTarget as MultisigFormElement;
 
@@ -86,31 +131,13 @@ const CreateMultisig: NextPage = () => {
         ? 'member'
         : { only: formEl.only.value.trim() };
 
-    const voters = [...Array(count)].map((_item, index) => ({
-      addr: formEl[`address_${index}`]?.value?.trim(),
-      weight: parseInt(formEl[`weight_${index}`]?.value?.trim()),
-    }));
     const required_weight = parseInt(formEl.threshold.value?.trim());
     const max_voting_period = {
       time: parseInt(formEl.duration.value?.trim()),
     };
 
-    // instantiate group address
-    const groupAddrMsg = {
-      admin: walletAddress,
-      members: voters,
-    };
-    const result = await signingClient.instantiate(
-      walletAddress,
-      Number(process.env.NEXT_PUBLIC_CW4_GROUP_CODE_ID),
-      groupAddrMsg,
-      'cw4 group address',
-      'auto',
-      { admin: walletAddress }
-    );
-
     const msg = {
-      group_addr: result.contractAddress,
+      group_addr: formEl.groupAddress.value.trim(),
       threshold: { absolute_count: { weight: required_weight } },
       max_voting_period,
       executor, // {"only":""} | undefined | "member"
@@ -125,27 +152,53 @@ const CreateMultisig: NextPage = () => {
       return;
     }
 
+    setLoading(true);
+    try {
+      const response = await signingClient.instantiate(
+        walletAddress,
+        MULTISIG_CODE_ID,
+        msg,
+        label,
+        'auto',
+        {
+          admin: walletAddress,
+        }
+      );
+
+      if (response.contractAddress.length > 0) {
+        setContractAddress(response.contractAddress);
+      }
+      setError('');
+    } catch (err: any) {
+      console.log('err', err);
+      setError(err.message);
+    }
+
+    setLoading(false);
+  };
+
+  const changeAdminToMultisig = async () => {
     if (!signingClient) {
       setLoading(false);
       setError('Please try reconnecting your wallet.');
       return;
     }
 
-    signingClient
-      .instantiate(walletAddress, MULTISIG_CODE_ID, msg, label, 'auto', {
-        admin: walletAddress,
-      })
-      .then((response: InstantiateResult) => {
-        setLoading(false);
-        if (response.contractAddress.length > 0) {
-          setContractAddress(response.contractAddress);
-        }
-      })
-      .catch((err: any) => {
-        setLoading(false);
-        console.log('err', err);
-        setError(err.message);
-      });
+    setLoading(true);
+    try {
+      signingClient.updateAdmin(
+        walletAddress,
+        contractAddress,
+        contractAddress,
+        'auto'
+      );
+    } catch (err: any) {
+      console.log('err', err);
+      setError(err.message);
+      setError('');
+    }
+
+    setLoading(false);
   };
 
   const complete = contractAddress.length > 0;
@@ -156,12 +209,26 @@ const CreateMultisig: NextPage = () => {
         <h1 className="text-5xl font-bold mb-8">New Multisig</h1>
         <form
           className="container mx-auto max-w-lg mb-8"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmitGroup}
         >
+          <div className="w-full my-4">
+            <label className="text-left font-bold block w-full pb-2">
+              Group Label
+            </label>
+            <input
+              className="block box-border m-0 w-full rounded input input-bordered focus:input-primary font-mono"
+              type="text"
+              name="groupLabel"
+              placeholder="my group"
+              size={45}
+              readOnly={complete}
+            />
+          </div>
+
           <table className="w-full mb-8">
             <thead>
               <tr>
-                <th>Address</th>
+                <th className="text-left">Address</th>
                 <th>Weight</th>
               </tr>
             </thead>
@@ -184,6 +251,39 @@ const CreateMultisig: NextPage = () => {
               </tr>
             </tbody>
           </table>
+
+          {!complete && (
+            <button
+              className={`btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full w-full ${
+                loading ? 'loading' : ''
+              }`}
+              style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+              type="submit"
+              disabled={loading}
+            >
+              Create Group
+            </button>
+          )}
+        </form>
+
+        <form
+          className="container mx-auto max-w-lg mb-8"
+          onSubmit={handleSubmit}
+        >
+          <div className="w-full my-4">
+            <label className="text-left font-bold block w-full pb-2">
+              Group Address
+            </label>
+            <input
+              className="block box-border m-0 w-full rounded input input-bordered focus:input-primary font-mono"
+              type="text"
+              name="groupAddress"
+              placeholder="orai1xxxx..."
+              defaultValue={groupAddress}
+              size={45}
+              readOnly={complete}
+            />
+          </div>
 
           <table className="w-full my-4">
             <thead>
@@ -272,6 +372,7 @@ const CreateMultisig: NextPage = () => {
               </tr>
             </tbody>
           </table>
+
           {!complete && (
             <button
               className={`btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full w-full ${
@@ -291,15 +392,28 @@ const CreateMultisig: NextPage = () => {
         {contractAddress !== '' && (
           <div className="text-right">
             <LineAlert variant="success" msg={`Success!`} />
-            <button
-              className="mt-4 box-border px-4 py-2 btn btn-primary"
-              onClick={(e) => {
-                e.preventDefault();
-                router.push(`/${encodeURIComponent(contractAddress)}`);
-              }}
-            >
-              View Multisig &#8599;
-            </button>
+
+            <div className="w-full flex items-center justify-between">
+              <button
+                className="mt-4 box-border px-4 py-2 btn btn-info"
+                onClick={(e) => {
+                  e.preventDefault();
+                  changeAdminToMultisig();
+                }}
+              >
+                Change admin to multisig
+              </button>
+
+              <button
+                className="mt-4 box-border px-4 py-2 btn btn-primary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  router.push(`/${encodeURIComponent(contractAddress)}`);
+                }}
+              >
+                View Multisig &#8599;
+              </button>
+            </div>
           </div>
         )}
       </div>
