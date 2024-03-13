@@ -1,16 +1,16 @@
-import type { NextPage } from 'next'
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import WalletLoader from 'components/WalletLoader'
-import Link from 'next/link'
+import type { NextPage } from 'next';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import WalletLoader from 'components/WalletLoader';
+import Link from 'next/link';
+import { contracts } from '../util/constants';
 
-const contracts = (process.env.NEXT_PUBLIC_CONTRACTS || '').split(/\s*,\s*/)
 const Home: NextPage = () => {
-  const router = useRouter()
-  const [address, setAddress] = useState('')
+  const router = useRouter();
+  const [address, setAddress] = useState('');
 
   if (router.asPath !== router.route && router.route === '/') {
-    router.push(router.asPath)
+    router.push(router.asPath);
   }
 
   return (
@@ -27,7 +27,7 @@ const Home: NextPage = () => {
                 value={address}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') {
-                    router.push(`/${event.currentTarget.value}`)
+                    router.push(`/${event.currentTarget.value}`);
                   }
                 }}
                 onChange={(event) => setAddress(event.target.value)}
@@ -37,8 +37,8 @@ const Home: NextPage = () => {
                 onClick={() => {
                   const inputEl = document.getElementById(
                     'multisig-address'
-                  ) as HTMLInputElement
-                  router.push(`/${inputEl.value}`)
+                  ) as HTMLInputElement;
+                  router.push(`/${inputEl.value}`);
                 }}
               >
                 GO
@@ -57,23 +57,22 @@ const Home: NextPage = () => {
         </div>
 
         <div className="divider p-8 before:bg-secondary after:bg-secondary before:h-[1px] after:h-[1px]"></div>
-        {contracts.length && (
-          <div className="grid bg-base-100 place-items-center">
-            <h1 className="text-4xl font-bold mb-8">Existing...</h1>
-            {contracts.map((contract) => (
-              <Link
-                key={contract}
-                href={`/${encodeURIComponent(contract)}`}
-                className="block btn btn-link btn-primary w-full max-w-full truncate lowercase"
-              >
-                {contract}
-              </Link>
-            ))}
-          </div>
-        )}
+
+        <div className="grid bg-base-100 place-items-center">
+          <h1 className="text-4xl font-bold mb-8">Existing...</h1>
+          {Object.entries(contracts).map(([contract, label]) => (
+            <Link
+              key={contract}
+              href={`/${encodeURIComponent(contract)}`}
+              className="block btn btn-link btn-primary w-full max-w-full text-lg truncate normal-case"
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
       </div>
     </WalletLoader>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
