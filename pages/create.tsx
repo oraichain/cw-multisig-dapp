@@ -11,9 +11,17 @@ import { MsgUpdateAdminEncodeObject } from '@cosmjs/cosmwasm-stargate';
 import { MsgUpdateAdmin } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { isDeliverTxFailure, logs } from '@cosmjs/stargate';
 
-function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
+function AddressRow({
+  idx,
+  readOnly,
+  onRemove,
+}: {
+  idx: number;
+  readOnly: boolean;
+  onRemove?: (id: number) => void;
+}) {
   return (
-    <tr key={idx}>
+    <tr>
       <td className="pr-2 pb-2">
         <input
           className="block box-border m-0 w-full rounded input input-bordered focus:input-primary font-mono"
@@ -25,14 +33,26 @@ function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
         />
       </td>
       <td className="pb-2">
-        <input
-          type="number"
-          className="block box-border m-0 w-full rounded input input-bordered focus:input-primary font-mono"
-          name={`weight_${idx}`}
-          min={1}
-          max={999}
-          readOnly={readOnly}
-        />
+        <div className="flex items-center block input-bordered input box-border focus:input-primary m-0 w-full rounded pr-0 font-mono">
+          <input
+            type="number"
+            className="bg-transparent outline-none"
+            name={`weight_${idx}`}
+            defaultValue="1"
+            min={1}
+            max={999}
+            readOnly={readOnly}
+          />
+          {idx > 1 && (
+            <button
+              type="button"
+              onClick={() => onRemove?.(idx)}
+              className="p-2 text-lg"
+            >
+              &#10008;
+            </button>
+          )}
+        </div>
       </td>
     </tr>
   );
@@ -64,7 +84,7 @@ interface MultisigFormElement extends HTMLFormElement {
 const CreateMultisig: NextPage = () => {
   const router = useRouter();
   const { walletAddress, signingClient } = useSigningClient();
-  const [count, setCount] = useState(2);
+  const [addressIds, setAddressIds] = useState([0, 1]);
   const [contractAddress, setContractAddress] = useState('');
   const [groupAddress, setGroupAddress] = useState('');
   const [error, setError] = useState('');
@@ -82,9 +102,9 @@ const CreateMultisig: NextPage = () => {
 
     const formEl = event.currentTarget as MultisigFormElement;
 
-    const voters = [...Array(count)].map((_item, index) => ({
-      addr: formEl[`address_${index}`]?.value?.trim(),
-      weight: parseInt(formEl[`weight_${index}`]?.value?.trim()),
+    const voters = addressIds.map((idx) => ({
+      addr: formEl[`address_${idx}`]?.value?.trim(),
+      weight: parseInt(formEl[`weight_${idx}`]?.value?.trim()),
     }));
 
     // instantiate group address
@@ -246,8 +266,20 @@ const CreateMultisig: NextPage = () => {
               </tr>
             </thead>
             <tbody>
-              {[...Array(count)].map((_item, index) => (
-                <AddressRow key={index} idx={index} readOnly={complete} />
+              {addressIds.map((idx) => (
+                <AddressRow
+                  key={idx}
+                  idx={idx}
+                  readOnly={complete}
+                  onRemove={(id) => {
+                    const index = addressIds.indexOf(id);
+                    setAddressIds(
+                      addressIds
+                        .slice(0, index)
+                        .concat(addressIds.slice(index + 1))
+                    );
+                  }}
+                />
               ))}
               <tr>
                 <td colSpan={2} className="text-right">
@@ -255,7 +287,9 @@ const CreateMultisig: NextPage = () => {
                     className="btn btn-outline btn-primary btn-md text-md rounded-full"
                     onClick={(e) => {
                       e.preventDefault();
-                      setCount(count + 1);
+                      setAddressIds(
+                        addressIds.concat(Math.max(...addressIds) + 1)
+                      );
                     }}
                   >
                     + Add another
@@ -367,7 +401,7 @@ const CreateMultisig: NextPage = () => {
                     className="block box-border m-0 w-full rounded input input-bordered focus:input-primary"
                     name="threshold"
                     type="number"
-                    defaultValue={count}
+                    defaultValue={addressIds.length}
                     min={1}
                     max={999}
                     readOnly={complete}
