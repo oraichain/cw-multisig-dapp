@@ -7,6 +7,9 @@ import { useRouter } from 'next/router';
 import LineAlert from 'components/LineAlert';
 import { InstantiateMsg } from 'types/cw3';
 import { MULTISIG_CODE_ID } from 'hooks/cosmwasm';
+import { MsgUpdateAdminEncodeObject } from '@cosmjs/cosmwasm-stargate';
+import { MsgUpdateAdmin } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
+import { isDeliverTxFailure, logs } from '@cosmjs/stargate';
 
 function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
   return (
@@ -184,16 +187,30 @@ const CreateMultisig: NextPage = () => {
 
     setLoading(true);
     try {
-      signingClient.updateAdmin(
+      const updateAdminMsgs: MsgUpdateAdminEncodeObject[] = [
+        groupAddress,
+        contractAddress,
+      ].map((contract) => ({
+        typeUrl: '/cosmwasm.wasm.v1.MsgUpdateAdmin',
+        value: MsgUpdateAdmin.fromPartial({
+          sender: walletAddress,
+          contract,
+          newAdmin: contractAddress,
+        }),
+      }));
+      const result = await signingClient.signAndBroadcast(
         walletAddress,
-        contractAddress,
-        contractAddress,
+        updateAdminMsgs,
         'auto'
       );
+      if (isDeliverTxFailure(result)) {
+        throw new Error(result.rawLog);
+      }
+
+      setError('');
     } catch (err: any) {
       console.log('err', err);
       setError(err.message);
-      setError('');
     }
 
     setLoading(false);
