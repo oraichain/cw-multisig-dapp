@@ -68,12 +68,14 @@ const CreateMultisig: NextPage = () => {
   const [contractAddress, setContractAddress] = useState('');
   const [groupAddress, setGroupAddress] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<
+    'group' | 'multisig' | 'change-admin' | ''
+  >('');
 
   const handleSubmitGroup = async (event: FormEvent<MultisigFormElement>) => {
     event.preventDefault();
     if (!signingClient) {
-      setLoading(false);
+      setLoading('');
       setError('Please try reconnecting your wallet.');
       return;
     }
@@ -91,7 +93,7 @@ const CreateMultisig: NextPage = () => {
       members: voters,
     };
 
-    setLoading(true);
+    setLoading('group');
     try {
       const result = await signingClient.instantiate(
         walletAddress,
@@ -108,13 +110,13 @@ const CreateMultisig: NextPage = () => {
       console.log('err', err);
       setError(err.message);
     }
-    setLoading(false);
+    setLoading('');
   };
 
   const handleSubmit = async (event: FormEvent<MultisigFormElement>) => {
     event.preventDefault();
     if (!signingClient) {
-      setLoading(false);
+      setLoading('');
       setError('Please try reconnecting your wallet.');
       return;
     }
@@ -144,12 +146,12 @@ const CreateMultisig: NextPage = () => {
 
     // @ebaker TODO: add more validation
     if (!validateNonEmpty(msg, label)) {
-      setLoading(false);
+      setLoading('');
       setError('All fields are required.');
       return;
     }
 
-    setLoading(true);
+    setLoading('multisig');
     try {
       const response = await signingClient.instantiate(
         walletAddress,
@@ -171,17 +173,17 @@ const CreateMultisig: NextPage = () => {
       setError(err.message);
     }
 
-    setLoading(false);
+    setLoading('');
   };
 
   const changeAdminToMultisig = async () => {
     if (!signingClient) {
-      setLoading(false);
+      setLoading('');
       setError('Please try reconnecting your wallet.');
       return;
     }
 
-    setLoading(true);
+    setLoading('change-admin');
     try {
       const updateAdminMsgs: MsgUpdateAdminEncodeObject[] = [
         groupAddress,
@@ -209,7 +211,7 @@ const CreateMultisig: NextPage = () => {
       setError(err.message);
     }
 
-    setLoading(false);
+    setLoading('');
   };
 
   const complete = contractAddress.length > 0;
@@ -266,11 +268,11 @@ const CreateMultisig: NextPage = () => {
           {!complete && (
             <button
               className={`btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full w-full ${
-                loading ? 'loading' : ''
+                loading === 'group' ? 'loading' : ''
               }`}
               style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
               type="submit"
-              disabled={loading}
+              disabled={loading === 'group'}
             >
               Create Group
             </button>
@@ -390,11 +392,11 @@ const CreateMultisig: NextPage = () => {
           {!complete && (
             <button
               className={`btn btn-primary btn-lg font-semibold hover:text-base-100 text-2xl rounded-full w-full ${
-                loading ? 'loading' : ''
+                loading === 'multisig' ? 'loading' : ''
               }`}
               style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
               type="submit"
-              disabled={loading}
+              disabled={loading === 'multisig'}
             >
               Create Multisig
             </button>
@@ -409,7 +411,10 @@ const CreateMultisig: NextPage = () => {
 
             <div className="w-full flex items-center justify-between">
               <button
-                className="mt-4 box-border px-4 py-2 btn btn-info"
+                className={`mt-4 box-border px-4 py-2 btn btn-info ${
+                  loading === 'change-admin' ? 'loading' : ''
+                }`}
+                disabled={loading === 'change-admin'}
                 onClick={(e) => {
                   e.preventDefault();
                   changeAdminToMultisig();
