@@ -66,9 +66,7 @@ const CreateMultisig: NextPage = () => {
   const router = useRouter();
   const { walletAddress, signingClient } = useSigningClient();
   const [count, setCount] = useState(2);
-  const [contractAddress, setContractAddress] = useState(
-    'orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0'
-  );
+  const [contractAddress, setContractAddress] = useState('');
   const [groupAddress, setGroupAddress] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -272,6 +270,19 @@ const CreateMultisig: NextPage = () => {
         >
           <div className="w-full my-4">
             <label className="text-left font-bold block w-full pb-2">
+              Multisign Label
+            </label>
+            <input
+              className="block box-border m-0 w-full rounded  input input-bordered focus:input-primary"
+              name="label"
+              type="text"
+              placeholder="My multisig name"
+              readOnly={complete}
+            />
+          </div>
+
+          <div className="w-full my-4">
+            <label className="text-left font-bold block w-full pb-2">
               Group Address
             </label>
             <input
@@ -332,7 +343,6 @@ const CreateMultisig: NextPage = () => {
                 <th className="text-left box-border px-2 text-sm">
                   Max Voting Period (seconds)
                 </th>
-                <th className="text-left">Label</th>
               </tr>
             </thead>
             <tbody>
@@ -357,15 +367,6 @@ const CreateMultisig: NextPage = () => {
                     min={1}
                     max={2147483647}
                     defaultValue={604800}
-                    readOnly={complete}
-                  />
-                </td>
-                <td>
-                  <input
-                    className="block box-border m-0 w-full rounded  input input-bordered focus:input-primary"
-                    name="label"
-                    type="text"
-                    placeholder="My multisig name"
                     readOnly={complete}
                   />
                 </td>
