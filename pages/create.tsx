@@ -39,18 +39,14 @@ function AddressRow({ idx, readOnly }: { idx: number; readOnly: boolean }) {
 }
 
 function validateNonEmpty(msg: InstantiateMsg, label: string) {
-  const { threshold, max_voting_period, voters } = msg;
+  const { threshold, max_voting_period } = msg;
   if (isNaN(threshold.absolute_count.weight) || isNaN(max_voting_period.time)) {
     return false;
   }
   if (label.length === 0) {
     return false;
   }
-  // if (
-  //   voters.some(({ addr, weight }: Voter) => addr.length === 0 || isNaN(weight))
-  // ) {
-  //   return false
-  // }
+
   return true;
 }
 
