@@ -1,16 +1,16 @@
-import type { NextPage } from 'next'
-import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/cosmwasm'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import LineAlert from 'components/LineAlert'
-import { ProposalResponse } from 'types/cw3'
-import ReactCodeMirror, { EditorView } from '@uiw/react-codemirror'
-import widgets from 'components/widgets'
-import { json, jsonParseLinter } from '@codemirror/lang-json'
-import { linter } from '@codemirror/lint'
-import { decodeProto } from 'util/conversion'
-import { ExecuteInstruction } from '@cosmjs/cosmwasm-stargate'
+import type { NextPage } from 'next';
+import WalletLoader from 'components/WalletLoader';
+import { useSigningClient } from 'contexts/cosmwasm';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import LineAlert from 'components/LineAlert';
+import { ProposalResponse } from 'types/cw3';
+import ReactCodeMirror, { EditorView } from '@uiw/react-codemirror';
+import widgets from 'components/widgets';
+import { json, jsonParseLinter } from '@codemirror/lang-json';
+import { linter } from '@codemirror/lint';
+import { decodeProto } from 'util/conversion';
+import { ExecuteInstruction } from '@cosmjs/cosmwasm-stargate';
 
 function VoteButtons({
   onVoteYes = () => {},
@@ -20,15 +20,15 @@ function VoteButtons({
   walletAddress = '',
   status = '',
 }) {
-  let voted = false
+  let voted = false;
 
   const voteList = votes.map((vote) => {
     const variant =
-      vote.vote === 'yes' ? 'success' : vote.vote === 'no' ? 'error' : 'error'
-    let voter = vote.voter
+      vote.vote === 'yes' ? 'success' : vote.vote === 'no' ? 'error' : 'error';
+    let voter = vote.voter;
     if (voter === walletAddress) {
-      voted = true
-      voter = 'You (' + voter + ')'
+      voted = true;
+      voter = 'You (' + voter + ')';
     }
     return (
       <LineAlert
@@ -38,8 +38,8 @@ function VoteButtons({
         link={`https://oraiscan.io/Oraichain/account/${vote.voter}`}
         msg={`${voter} voted ${vote.vote}`}
       />
-    )
-  })
+    );
+  });
 
   if (voted) {
     return (
@@ -55,11 +55,11 @@ function VoteButtons({
           </button>
         )}
       </>
-    )
+    );
   }
 
   if (status !== 'open') {
-    return null
+    return null;
   }
   return (
     <>
@@ -86,28 +86,28 @@ function VoteButtons({
         </button>
       </div>
     </>
-  )
+  );
 }
 
 const Proposal: NextPage = () => {
-  const router = useRouter()
-  const multisigAddress = router.query.multisigAddress as string
-  const proposalId = router.query.proposalId as string
+  const router = useRouter();
+  const multisigAddress = router.query.multisigAddress as string;
+  const proposalId = router.query.proposalId as string;
 
-  const { walletAddress, signingClient } = useSigningClient()
-  const [customMsg, setCustomMsg] = useState('[]')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [proposal, setProposal] = useState<ProposalResponse | null>(null)
-  const [votes, setVotes] = useState([])
-  const [timestamp, setTimestamp] = useState(new Date())
-  const [transactionHash, setTransactionHash] = useState('')
+  const { walletAddress, signingClient } = useSigningClient();
+  const [customMsg, setCustomMsg] = useState('[]');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [proposal, setProposal] = useState<ProposalResponse | null>(null);
+  const [votes, setVotes] = useState([]);
+  const [timestamp, setTimestamp] = useState(new Date());
+  const [transactionHash, setTransactionHash] = useState('');
 
   useEffect(() => {
     if (walletAddress.length === 0 || !signingClient) {
-      return
+      return;
     }
-    setLoading(true)
+    setLoading(true);
     Promise.all([
       signingClient.queryContractSmart(multisigAddress, {
         proposal: { proposal_id: parseInt(proposalId) },
@@ -117,62 +117,64 @@ const Proposal: NextPage = () => {
       }),
     ])
       .then((values) => {
-        const [proposal, { votes }] = values
-        setProposal(proposal)
-        setVotes(votes)
-        setLoading(false)
+        const [proposal, { votes }] = values;
+        setProposal(proposal);
+        setVotes(votes);
       })
       .catch((err) => {
-        setLoading(false)
-        setError(err.message)
+        setError(err.message);
       })
-  }, [walletAddress, signingClient, multisigAddress, proposalId, timestamp])
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [walletAddress, signingClient, multisigAddress, proposalId, timestamp]);
 
   const handleVote = async (vote: string) => {
-    signingClient
-      ?.execute(
+    setLoading(true);
+    try {
+      const response = await signingClient?.execute(
         walletAddress,
         multisigAddress,
         {
           vote: { proposal_id: parseInt(proposalId), vote },
         },
         'auto'
-      )
-      .then((response) => {
-        setTimestamp(new Date())
-        setTransactionHash(response.transactionHash)
-      })
-      .catch((err) => {
-        setLoading(false)
-        setError(err.message)
-      })
-  }
+      );
+
+      setTimestamp(new Date());
+      setTransactionHash(response.transactionHash);
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
 
   const handleUseTemplate = () => {
     router.push(
       `/${encodeURIComponent(multisigAddress)}/create?id=${proposalId}`
-    )
-  }
+    );
+  };
 
   const handleExecute = async () => {
-    setError('')
+    setLoading(true);
     try {
-      let executeInstructions: ExecuteInstruction[]
+      let executeInstructions: ExecuteInstruction[];
       try {
-        let customMsgObjects = JSON.parse(customMsg)
+        let customMsgObjects = JSON.parse(customMsg);
         if (!Array.isArray(customMsgObjects)) {
-          customMsgObjects = [customMsgObjects]
+          customMsgObjects = [customMsgObjects];
         }
         executeInstructions = customMsgObjects.map(({ wasm }) => {
-          const { contract_addr: contractAddress, msg, funds } = wasm.execute
+          const { contract_addr: contractAddress, msg, funds } = wasm.execute;
           return {
             contractAddress,
             msg,
             funds,
-          } as ExecuteInstruction
-        })
+          } as ExecuteInstruction;
+        });
       } catch {
-        executeInstructions = []
+        executeInstructions = [];
       }
 
       // run execute first
@@ -181,42 +183,43 @@ const Proposal: NextPage = () => {
         msg: {
           execute: { proposal_id: parseInt(proposalId) },
         },
-      })
+      });
 
       const response = await signingClient?.executeMultiple(
         walletAddress,
         executeInstructions,
         'auto'
-      )
+      );
 
-      setTimestamp(new Date())
-      setTransactionHash(response.transactionHash)
+      setTimestamp(new Date());
+      setTransactionHash(response.transactionHash);
+      setError('');
     } catch (err) {
-      setLoading(false)
-      setError(err.message)
+      setError(err.message);
     }
-  }
+    setLoading(false);
+  };
 
   const handleClose = async () => {
-    setError('')
-    signingClient
-      ?.execute(
+    setLoading(true);
+    try {
+      const response = await signingClient?.execute(
         walletAddress,
         multisigAddress,
         {
           close: { proposal_id: parseInt(proposalId) },
         },
         'auto'
-      )
-      .then((response) => {
-        setTimestamp(new Date())
-        setTransactionHash(response.transactionHash)
-      })
-      .catch((err) => {
-        setLoading(false)
-        setError(err.message)
-      })
-  }
+      );
+
+      setTimestamp(new Date());
+      setTransactionHash(response.transactionHash);
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
 
   return (
     <WalletLoader loading={loading}>
@@ -249,8 +252,8 @@ const Proposal: NextPage = () => {
                 onVoteYes={handleVote.bind(null, 'yes')}
                 onVoteNo={handleVote.bind(null, 'no')}
                 onBack={(e) => {
-                  e.preventDefault()
-                  router.push(`/${multisigAddress}`)
+                  e.preventDefault();
+                  router.push(`/${multisigAddress}`);
                 }}
                 votes={votes}
                 walletAddress={walletAddress}
@@ -286,8 +289,8 @@ const Proposal: NextPage = () => {
                   <button
                     className="box-border px-4 py-2 rounded bg-gray-500 hover:bg-gray-600 text-white"
                     onClick={(e) => {
-                      e.preventDefault()
-                      router.push(`/${multisigAddress}`)
+                      e.preventDefault();
+                      router.push(`/${multisigAddress}`);
                     }}
                   >
                     {'< Proposals'}
@@ -323,7 +326,7 @@ const Proposal: NextPage = () => {
         </div>
       </div>
     </WalletLoader>
-  )
-}
+  );
+};
 
-export default Proposal
+export default Proposal;
