@@ -7,8 +7,7 @@ import LineAlert from 'components/LineAlert';
 import { ProposalResponse } from 'types/cw3';
 import ReactCodeMirror, { EditorView } from '@uiw/react-codemirror';
 import widgets from 'components/widgets';
-import { json, jsonParseLinter } from '@codemirror/lang-json';
-import { linter } from '@codemirror/lint';
+import { json } from '@codemirror/lang-json';
 import { decodeProto } from 'util/conversion';
 import { ExecuteInstruction } from '@cosmjs/cosmwasm-stargate';
 
