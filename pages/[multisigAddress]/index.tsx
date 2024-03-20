@@ -1,49 +1,49 @@
-import type { NextPage } from 'next'
-import WalletLoader from 'components/WalletLoader'
-import { useSigningClient } from 'contexts/cosmwasm'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import ProposalCard from 'components/ProposalCard'
-import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3'
-import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm'
+import type { NextPage } from 'next';
+import WalletLoader from 'components/WalletLoader';
+import { useSigningClient } from 'contexts/cosmwasm';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import ProposalCard from 'components/ProposalCard';
+import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3';
+import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm';
 
 // TODO: review union Expiration from types/cw3
 type Expiration = {
-  at_height: number
-}
+  at_height?: number;
+  at_time?: Timestamp;
+};
 
 type Member = {
-  addr: string
-  weight: number
-}
+  addr: string;
+  weight: number;
+};
 
 const Home: NextPage = () => {
-  const router = useRouter()
-  const multisigAddress = router.query.multisigAddress as string
-  const [members, setMembers] = useState<Member[]>([])
-  const { walletAddress, signingClient } = useSigningClient()
+  const router = useRouter();
+  const multisigAddress = router.query.multisigAddress as string;
+  const [members, setMembers] = useState<Member[]>([]);
+  const { walletAddress, signingClient } = useSigningClient();
   const [reversedProposals, setReversedProposals] = useState<
     ProposalResponse[]
-  >([])
-  const [hideLoadMore, setHideLoadMore] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [blockHeight, setBlockHeight] = useState(0)
-  const [startBefore, setStartBefore] = useState<number | null>(null)
+  >([]);
+  const [hideLoadMore, setHideLoadMore] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [startBefore, setStartBefore] = useState<number | null>(null);
 
   const getExpiresAt = (expires: Expiration) => {
-    const miliseconds = Date.now() + (expires.at_height - blockHeight) * 5000
-    const expiresAtDateTime = new Date(miliseconds).toLocaleString()
-    return expiresAtDateTime
-  }
+    return expires.at_time
+      ? new Date(parseInt(expires.at_time) / 1000000).toLocaleString()
+      : 'block ' + new Intl.NumberFormat().format(expires.at_height);
+  };
 
   useEffect(() => {
     if (walletAddress.length === 0 || !signingClient) {
-      setReversedProposals([])
-      setHideLoadMore(false)
-      return
+      setReversedProposals([]);
+      setHideLoadMore(false);
+      return;
     }
-    signingClient.getHeight().then(setBlockHeight)
-    setLoading(true)
+
+    setLoading(true);
     Promise.all([
       signingClient.queryContractSmart(multisigAddress, {
         reverse_proposals: {
@@ -61,32 +61,32 @@ const Home: NextPage = () => {
           { group_addr: string }
         ]) => {
           if (response.proposals.length < 10) {
-            setHideLoadMore(true)
+            setHideLoadMore(true);
           }
           setReversedProposals([
             ...new Map(
               reversedProposals.concat(response.proposals).map((p) => [p.id, p])
             ).values(),
-          ])
+          ]);
 
           signingClient
             .queryContractSmart(config.group_addr, {
               list_members: {},
             })
             .then((data) => {
-              setMembers(data.members)
+              setMembers(data.members);
             })
             .catch((err) => {
-              console.log('err', err)
-            })
+              console.log('err', err);
+            });
         }
       )
       .then(() => setLoading(false))
       .catch((err) => {
-        setLoading(false)
-        console.log('err', err)
-      })
-  }, [walletAddress, signingClient, multisigAddress, startBefore])
+        setLoading(false);
+        console.log('err', err);
+      });
+  }, [walletAddress, signingClient, multisigAddress, startBefore]);
 
   return (
     <WalletLoader loading={reversedProposals.length === 0 && loading}>
@@ -135,8 +135,8 @@ const Home: NextPage = () => {
           </div>
         )}
         {reversedProposals.map((proposal, idx) => {
-          const { title, id, status } = proposal
-          const expires = proposal.expires as Expiration
+          const { title, id, status } = proposal;
+          const expires = proposal.expires as Expiration;
 
           return (
             <ProposalCard
@@ -147,14 +147,14 @@ const Home: NextPage = () => {
               expires_at={getExpiresAt(expires)}
               multisigAddress={multisigAddress}
             />
-          )
+          );
         })}
         {!hideLoadMore && (
           <button
             className="btn btn-primary btn-outline text-lg w-full mt-2"
             onClick={() => {
-              const proposal = reversedProposals[reversedProposals.length - 1]
-              setStartBefore(proposal.id)
+              const proposal = reversedProposals[reversedProposals.length - 1];
+              setStartBefore(proposal.id);
             }}
           >
             Load More
@@ -163,7 +163,7 @@ const Home: NextPage = () => {
       </div>
       <div></div>
     </WalletLoader>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
