@@ -10,6 +10,7 @@ import widgets from 'components/widgets';
 import { json } from '@codemirror/lang-json';
 import { decodeProto } from 'util/conversion';
 import { ExecuteInstruction } from '@cosmjs/cosmwasm-stargate';
+import { users } from 'util/constants';
 
 function VoteButtons({
   onVoteYes = () => {},
@@ -27,7 +28,9 @@ function VoteButtons({
     let voter = vote.voter;
     if (voter === walletAddress) {
       voted = true;
-      voter = 'You (' + voter + ')';
+      voter = 'You (' + walletAddress + ')';
+    } else if (users[voter]) {
+      voter = users[voter] + ' (' + voter + ')';
     }
     return (
       <LineAlert

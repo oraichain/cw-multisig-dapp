@@ -17,3 +17,14 @@ export const contracts = {
   orai1nqwk32nt37s2emkss2595pxdmck768jzdenecckmectq40egtpwstddejm:
     'CUPI multi-sig contract',
 };
+
+export const users = {
+  orai1sukkexujpz2trec6x8t6c3dlngc52c2t5m2q29: 'Chung Dao',
+  orai1zm4zwxxtwe44aymcpp9qj94dew63guv58ncrj6: 'Chung Dao',
+  orai1vxskpekkkur8atse58vmkpgjy0sxmv5v2a4j3e: 'Canh Tuan',
+  orai1gpp3r6q07kgmnzqzdd2g0fm2hzv53qk3umnfj7: 'Tung Do',
+  orai1ur2vsjrjarygawpdwtqteaazfchvw4fg6uql76: 'Tu Pham',
+  orai17a7yeypmflmfmndelpue2cdq4yh2lf4ujg4s6v: 'Chu Tu',
+  orai1wzqgtqtyzjm8js2tucxxln0h80v3x55vhjdfft: 'Trung Nguyen',
+  orai14h0n2nlfrfz8tn9usfyjrxqd23fhj9a0ec0pm7: 'Duc Pham',
+};
