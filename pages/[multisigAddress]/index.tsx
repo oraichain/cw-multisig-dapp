@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import ProposalCard from 'components/ProposalCard';
 import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3';
 import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm';
+import { users } from 'util/constants';
 
 // TODO: review union Expiration from types/cw3
 type Expiration = {
@@ -37,79 +38,92 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (walletAddress.length === 0 || !signingClient) {
+    if (!signingClient) {
+      return;
+    }
+    signingClient
+      .queryContractSmart(multisigAddress, {
+        config: {},
+      })
+      .then((config: { group_addr: string }) => {
+        signingClient
+          .queryContractSmart(config.group_addr, {
+            list_members: {},
+          })
+          .then((data) => {
+            setMembers(data.members);
+          })
+          .catch((err) => {
+            console.log('err', err);
+          });
+      });
+  }, [signingClient]);
+
+  useEffect(() => {
+    if (!signingClient) {
       setReversedProposals([]);
       setHideLoadMore(false);
       return;
     }
 
     setLoading(true);
-    Promise.all([
-      signingClient.queryContractSmart(multisigAddress, {
+
+    signingClient
+      .queryContractSmart(multisigAddress, {
         reverse_proposals: {
           ...(startBefore && { start_before: startBefore }),
           limit: 10,
         },
-      }),
-      signingClient.queryContractSmart(multisigAddress, {
-        config: {},
-      }),
-    ])
-      .then(
-        ([response, config]: [
-          ProposalListResponse,
-          { group_addr: string }
-        ]) => {
-          if (response.proposals.length < 10) {
-            setHideLoadMore(true);
-          }
-          setReversedProposals([
-            ...new Map(
-              reversedProposals.concat(response.proposals).map((p) => [p.id, p])
-            ).values(),
-          ]);
-
-          signingClient
-            .queryContractSmart(config.group_addr, {
-              list_members: {},
-            })
-            .then((data) => {
-              setMembers(data.members);
-            })
-            .catch((err) => {
-              console.log('err', err);
-            });
+      })
+      .then((response: ProposalListResponse) => {
+        if (response.proposals.length < 10) {
+          setHideLoadMore(true);
         }
-      )
-      .then(() => setLoading(false))
+        setReversedProposals([
+          ...new Map(
+            reversedProposals.concat(response.proposals).map((p) => [p.id, p])
+          ).values(),
+        ]);
+      })
       .catch((err) => {
-        setLoading(false);
         console.log('err', err);
-      });
-  }, [walletAddress, signingClient, multisigAddress, startBefore]);
+      })
+      .finally(() => setLoading(false));
+  }, [signingClient, multisigAddress, startBefore]);
 
   return (
     <WalletLoader loading={reversedProposals.length === 0 && loading}>
-      <div className="flex flex-col w-96 lg:w-6/12 max-w-full px-2 py-4">
-        <h1 className="text-left text-lg font-bold sm:text-3xl">
+      <div className="flex flex-col w-96 lg:w-6/12 max-w-full">
+        <h1 className="text-left text-lg font-bold sm:text-3xl px-2 py-4">
           Weight - Members
         </h1>
         <div className="w-full">
-          {members.map((member) => (
-            <a
-              key={member.addr}
-              href={`https://oraiscan.io/${PUBLIC_CHAIN_ID}/account/${member.addr}`}
-              target="_blank"
-            >
-              <div className={`card mb-4`}>
-                <div className="card-body py-4 px-2">
-                  <div className="text-md truncate m-0">
-                    {member.weight} - {member.addr}
+          {members.map((member) => {
+            let voter = member.addr;
+            if (voter === walletAddress) {
+              voter = 'You (' + walletAddress + ')';
+            } else if (users[voter]) {
+              voter = users[voter] + ' (' + voter + ')';
+            }
+            return (
+              <a
+                key={member.addr}
+                href={`https://oraiscan.io/${PUBLIC_CHAIN_ID}/account/${member.addr}`}
+                target="_blank"
+              >
+                <div className={`card mb-4`}>
+                  <div className="card-body p-2">
+                    <div className="text-md truncate m-0">
+                      <span className="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900 mr-4">
+                        {member.weight}
+                      </span>
+                      {voter}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </div>
       </div>
 

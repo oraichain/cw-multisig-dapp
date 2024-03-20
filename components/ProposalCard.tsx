@@ -1,11 +1,11 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
 interface ProposalCardProps {
-  title: string
-  id: string
-  multisigAddress: string
-  status: string
-  expires_at: string
+  title: string;
+  id: string;
+  multisigAddress: string;
+  status: string;
+  expires_at: string;
 }
 
 const icons = {
@@ -78,7 +78,7 @@ const icons = {
       className="checkbox checkbox-accent"
     />
   ),
-}
+};
 
 export default function ProposalCard({
   title,
@@ -90,10 +90,13 @@ export default function ProposalCard({
   return (
     <Link href={`/${encodeURIComponent(multisigAddress)}/${id}`}>
       <div className={`card mb-4`} title={`Expires at ${expires_at}`}>
-        <div className="card-body py-4 px-2">
+        <div className="card-body p-2">
           <div className="text-md flex flex-row justify-between m-0">
             <div>
-              {id} - {title}
+              <span className="text-xs font-bold inline-flex items-center px-2.5 py-0.5 rounded border border-blue-400 mr-4">
+                {id}
+              </span>
+              {title}
             </div>
             {status === 'passed' && (
               <div className="text-2xl text-warning">{icons.warning}</div>
@@ -111,5 +114,5 @@ export default function ProposalCard({
         </div>
       </div>
     </Link>
-  )
+  );
 }
