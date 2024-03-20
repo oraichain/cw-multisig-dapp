@@ -62,6 +62,7 @@ const Home: NextPage = () => {
           <h1 className="text-4xl font-bold mb-8">Existing...</h1>
           {Object.entries(contracts).map(([contract, label]) => (
             <Link
+              title={contract}
               key={contract}
               href={`/${encodeURIComponent(contract)}`}
               className="block btn btn-link btn-primary w-full max-w-full text-lg truncate normal-case"
