@@ -10,12 +10,7 @@ function WalletLoader({
   children: ReactNode;
   loading?: boolean;
 }) {
-  const {
-    walletAddress,
-    loading: clientLoading,
-    error,
-    connectWallet,
-  } = useSigningClient();
+  const { walletAddress, error, connectWallet } = useSigningClient();
 
   useEffect(() => {
     // auto connect when open page
@@ -29,7 +24,7 @@ function WalletLoader({
     };
   }, []);
 
-  if (loading || clientLoading) {
+  if (loading) {
     return (
       <div className="flex justify-center">
         <Loader />
