@@ -94,7 +94,7 @@ function VoteButtons({
 const Proposal: NextPage = () => {
   const router = useRouter();
   const multisigAddress = router.query.multisigAddress as string;
-  const proposalId = router.query.proposalId as string;
+  const proposalId = parseInt(router.query.proposalId as string);
 
   const { walletAddress, signingClient } = useSigningClient();
   const [customMsg, setCustomMsg] = useState('[]');
@@ -106,16 +106,16 @@ const Proposal: NextPage = () => {
   const [transactionHash, setTransactionHash] = useState('');
 
   useEffect(() => {
-    if (walletAddress.length === 0 || !signingClient) {
+    if (!signingClient) {
       return;
     }
     setLoading(true);
     Promise.all([
       signingClient.queryContractSmart(multisigAddress, {
-        proposal: { proposal_id: parseInt(proposalId) },
+        proposal: { proposal_id: proposalId },
       }),
       signingClient.queryContractSmart(multisigAddress, {
-        list_votes: { proposal_id: parseInt(proposalId) },
+        list_votes: { proposal_id: proposalId },
       }),
     ])
       .then((values) => {
@@ -129,7 +129,7 @@ const Proposal: NextPage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [walletAddress, signingClient, multisigAddress, proposalId, timestamp]);
+  }, [signingClient, multisigAddress, proposalId, timestamp]);
 
   const handleVote = async (vote: string) => {
     setLoading(true);
@@ -138,7 +138,7 @@ const Proposal: NextPage = () => {
         walletAddress,
         multisigAddress,
         {
-          vote: { proposal_id: parseInt(proposalId), vote },
+          vote: { proposal_id: proposalId, vote },
         },
         'auto'
       );
@@ -183,7 +183,7 @@ const Proposal: NextPage = () => {
       executeInstructions.unshift({
         contractAddress: multisigAddress,
         msg: {
-          execute: { proposal_id: parseInt(proposalId) },
+          execute: { proposal_id: proposalId },
         },
       });
 
@@ -209,7 +209,7 @@ const Proposal: NextPage = () => {
         walletAddress,
         multisigAddress,
         {
-          close: { proposal_id: parseInt(proposalId) },
+          close: { proposal_id: proposalId },
         },
         'auto'
       );

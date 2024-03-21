@@ -1,27 +1,32 @@
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
-import { useSigningClient } from 'contexts/cosmwasm'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { useSigningClient } from 'contexts/cosmwasm';
+import { contracts } from 'util/constants';
 
 function ContractLabel() {
-  const router = useRouter()
-  const multisigAddress = (router.query.multisigAddress || '') as string
-  const { signingClient } = useSigningClient()
-  const [label, setLabel] = useState('')
+  const router = useRouter();
+  const multisigAddress = (router.query.multisigAddress || '') as string;
+  const { signingClient } = useSigningClient();
+  const [label, setLabel] = useState('');
 
   useEffect(() => {
+    if (contracts[multisigAddress]) {
+      if (!label) setLabel(contracts[multisigAddress]);
+      return;
+    }
+
     if (multisigAddress.length === 0 || !signingClient) {
-      setLabel('')
-      return
+      return;
     }
 
     signingClient.getContract(multisigAddress).then((response) => {
-      setLabel(response.label)
-    })
-  }, [multisigAddress, signingClient])
+      setLabel(response.label);
+    });
+  }, [multisigAddress, signingClient]);
 
   if (label.length === 0) {
-    return <div className="flex items-center" />
+    return <div className="flex items-center" />;
   }
 
   return (
@@ -43,7 +48,7 @@ function ContractLabel() {
         <span className="capitalize hover:underline text-2xl">{label}</span>
       </Link>
     </div>
-  )
+  );
 }
 
-export default ContractLabel
+export default ContractLabel;
