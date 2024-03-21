@@ -1,21 +1,21 @@
-import { useState } from 'react'
-import { connectKeplr } from 'services/keplr'
-import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc'
+import { useState } from 'react';
+import { connectKeplr } from 'services/keplr';
+import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import {
   CosmWasmClient,
   SigningCosmWasmClient,
-} from '@cosmjs/cosmwasm-stargate'
-import { GasPrice } from '@cosmjs/stargate'
+} from '@cosmjs/cosmwasm-stargate';
+import { GasPrice } from '@cosmjs/stargate';
 
-const getStatus = Tendermint34Client.prototype.status
+const getStatus = Tendermint34Client.prototype.status;
 
 CosmWasmClient.prototype.getHeight = async function () {
-  const status = await getStatus.call(this.tmClient)
-  return status.syncInfo.latestBlockHeight
-}
+  const status = await getStatus.call(this.tmClient);
+  return status.syncInfo.latestBlockHeight;
+};
 
 // @ts-ignore
-Tendermint34Client.detectVersion = Tendermint37Client.detectVersion = () => {}
+Tendermint34Client.detectVersion = Tendermint37Client.detectVersion = () => {};
 // @ts-ignore
 Tendermint34Client.prototype.status = Tendermint37Client.prototype.status =
   () => {
@@ -24,51 +24,51 @@ Tendermint34Client.prototype.status = Tendermint37Client.prototype.status =
         network: PUBLIC_CHAIN_ID,
         version: '',
       },
-    }
-  }
+    };
+  };
 
 export interface ISigningCosmWasmClientContext {
-  walletAddress: string
-  signingClient: SigningCosmWasmClient | null
-  loading: boolean
-  error: any
-  connectWallet: any
-  disconnect: Function
+  walletAddress: string;
+  signingClient: SigningCosmWasmClient | null;
+  loading: boolean;
+  error: any;
+  connectWallet: any;
+  disconnect: Function;
 }
 
 export const PUBLIC_RPC_ENDPOINT =
-  process.env.NEXT_PUBLIC_CHAIN_RPC_ENDPOINT || ''
-export const PUBLIC_CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID
+  process.env.NEXT_PUBLIC_CHAIN_RPC_ENDPOINT || '';
+export const PUBLIC_CHAIN_ID = process.env.NEXT_PUBLIC_CHAIN_ID;
 
 export const MULTISIG_CODE_ID = parseInt(
   process.env.NEXT_PUBLIC_MULTISIG_CODE_ID as string
-)
+);
 
 export const GAS_PRICE = GasPrice.fromString(
   (process.env.NEXT_PUBLIC_GAS_PRICE || '0.001') +
     process.env.NEXT_PUBLIC_STAKING_DENOM
-)
+);
 
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
-  const [walletAddress, setWalletAddress] = useState('')
+  const [walletAddress, setWalletAddress] = useState('');
   const [signingClient, setSigningClient] =
-    useState<SigningCosmWasmClient | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
+    useState<SigningCosmWasmClient | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const connectWallet = async () => {
-    setLoading(true)
+    setLoading(true);
 
     try {
-      await connectKeplr()
+      await connectKeplr();
 
       // enable website to access kepler
-      await (window as any).keplr.enable(PUBLIC_CHAIN_ID)
+      await (window as any).keplr.enable(PUBLIC_CHAIN_ID);
 
       // get offline signer for signing txs
       const offlineSigner = await (window as any).getOfflineSigner(
         PUBLIC_CHAIN_ID
-      )
+      );
 
       // make client
       const client = await SigningCosmWasmClient.connectWithSigner(
@@ -77,27 +77,26 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
         {
           gasPrice: GAS_PRICE,
         }
-      )
-      setSigningClient(client)
+      );
+      setSigningClient(client);
 
       // get user address
-      const [{ address }] = await offlineSigner.getAccounts()
-      setWalletAddress(address)
-
-      setLoading(false)
+      const [{ address }] = await offlineSigner.getAccounts();
+      setWalletAddress(address);
     } catch (error) {
-      setError(error)
+      setError(error);
     }
-  }
+    setLoading(false);
+  };
 
   const disconnect = () => {
     if (signingClient) {
-      signingClient.disconnect()
+      signingClient.disconnect();
     }
-    setWalletAddress('')
-    setSigningClient(null)
-    setLoading(false)
-  }
+    setWalletAddress('');
+    setSigningClient(null);
+    setLoading(false);
+  };
 
   return {
     walletAddress,
@@ -106,5 +105,5 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
     error,
     connectWallet,
     disconnect,
-  }
-}
+  };
+};
