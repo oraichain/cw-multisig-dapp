@@ -22,7 +22,7 @@ type Member = {
 const Home: NextPage = () => {
   const router = useRouter();
   const multisigAddress = router.query.multisigAddress as string;
-  const [members, setMembers] = useState<Member[]>([]);
+  const [voters, setVoters] = useState<Member[]>([]);
   const { walletAddress, signingClient } = useSigningClient();
   const [reversedProposals, setReversedProposals] = useState<
     ProposalResponse[]
@@ -41,21 +41,16 @@ const Home: NextPage = () => {
     if (!signingClient) {
       return;
     }
+    // max return is 30
     signingClient
       .queryContractSmart(multisigAddress, {
-        config: {},
+        list_voters: { limit: 30 },
       })
-      .then((config: { group_addr: string }) => {
-        signingClient
-          .queryContractSmart(config.group_addr, {
-            list_members: {},
-          })
-          .then((data) => {
-            setMembers(data.members);
-          })
-          .catch((err) => {
-            console.log('err', err);
-          });
+      .then((data) => {
+        setVoters(data.voters);
+      })
+      .catch((err) => {
+        console.log('err', err);
       });
   }, [signingClient]);
 
@@ -98,7 +93,7 @@ const Home: NextPage = () => {
           Weight - Members
         </h1>
         <div className="w-full">
-          {members.map((member) => {
+          {voters.map((member) => {
             let voter = member.addr;
             if (voter === walletAddress) {
               voter = 'You (' + walletAddress + ')';
@@ -130,7 +125,7 @@ const Home: NextPage = () => {
       <div className="flex flex-col w-96 lg:w-6/12 max-w-full px-2 py-4">
         <div className="flex flex-row justify-between items-center mb-4">
           <h1 className="text-lg font-bold sm:text-3xl">ID - Proposals</h1>
-          {members.some((m) => m.addr === walletAddress) && (
+          {voters.some((m) => m.addr === walletAddress) && (
             <button
               className="btn btn-primary btn-sm text-lg"
               onClick={() =>
