@@ -12,6 +12,7 @@ function ContractLabel() {
 
   useEffect(() => {
     if (multisigAddress.length === 0 || !signingClient) {
+      setLabel('');
       return;
     }
 
