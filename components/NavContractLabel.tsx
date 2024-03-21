@@ -16,7 +16,7 @@ function ContractLabel() {
     }
 
     if (contracts[multisigAddress]) {
-      if (!label) setLabel(contracts[multisigAddress]);
+      setLabel(contracts[multisigAddress]);
       return;
     }
 
