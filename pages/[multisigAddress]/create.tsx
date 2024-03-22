@@ -51,7 +51,7 @@ const ProposalCreate: NextPage = () => {
     } else {
       setProposalForm(options[0]);
     }
-  }, [id, signingClient]);
+  }, [id]);
 
   const form =
     proposalForm && forms.find((item) => item.key === proposalForm.value);

@@ -130,7 +130,7 @@ const Proposal: NextPage = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [signingClient, multisigAddress, proposalId, timestamp]);
+  }, [multisigAddress, proposalId, timestamp]);
 
   const handleVote = async (vote: string) => {
     setLoading(true);

@@ -24,7 +24,7 @@ function ContractLabel() {
     signingClient.getContract(multisigAddress).then((response) => {
       setLabel(response.label);
     });
-  }, [multisigAddress, signingClient]);
+  }, [multisigAddress]);
 
   if (label.length === 0) {
     return <div className="flex items-center" />;
