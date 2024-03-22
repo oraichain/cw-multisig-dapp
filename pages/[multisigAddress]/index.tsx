@@ -52,7 +52,7 @@ const Home: NextPage = () => {
       .catch((err) => {
         console.log('err', err);
       });
-  }, [multisigAddress]);
+  }, [!!signingClient, multisigAddress]);
 
   useEffect(() => {
     if (!signingClient || !multisigAddress) {
@@ -84,7 +84,7 @@ const Home: NextPage = () => {
         console.log('err', err);
       })
       .finally(() => setLoading(false));
-  }, [multisigAddress, startBefore]);
+  }, [!!signingClient, multisigAddress, startBefore]);
 
   return (
     <WalletLoader loading={reversedProposals.length === 0 && loading}>
