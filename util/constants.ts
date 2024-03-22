@@ -1,21 +1,23 @@
 export const contracts = {
-  orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0: 'Oraichain:Foundation contract',
+  orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0: 'Oraichain:Foundation Multisig',
   orai1dugk9jpxwkyd0gt20344vu3ltx6083zjkv5pygt8hhtv8u420k7s32wvky:
-    'Oraichain:Ecosystem multisig',
+    'Oraichain:Ecosystem Multisig',
   orai1fwq0ct8ww0hm574vsdrhj7p5h0rd0vcz2hxsd0hfufwdlw4u78ksp4wj4y:
-    'Oraichain: DAO multisig',
+    'Oraichain: DAO Multisig',
+  orai1kksknvjy8hjkxlqzwqyghll7djz3854huqn7up4d20ad6hp5sglsyyfe4k:
+    'DeFi Fund Management Multisig',
   orai1wn0qfdhn7xfn7fvsx6fme96x4mcuzrm9wm3mvlunp5e737rpgt4qndmfv8:
-    'Oraidex Operation Multi-sig',
+    'DeFi Operation Multisig',
   orai1nk22lezd49a3pkmltx3yyjmzk79nef3cdsag7q3tll6kv9xqcyzqut9486:
-    'OCH-Fund-Oraichain',
+    'OCH-Fund-Oraichain Multisig',
   orai1duyupjercjkhrjr33s0nkq0hr0y59e3cufjpavehul9c92626arspytrjf:
-    'OCH-Multi-sig',
+    'OCH Multisig',
   orai13g792u75auyue7dxwp75q5gr2pjvtsycvnh80cw4pgk02j9ckqcq2lkfl5:
-    'OCH-Ecosystem',
+    'OCH-Ecosystem Multisig',
   orai12l8crutcjxdp0tkdp9yrf0ddujk5se9rrk0rxh3epdckzju4knqsh6vw9s:
-    'OCH-Community',
+    'OCH-Community Multisig',
   orai1nqwk32nt37s2emkss2595pxdmck768jzdenecckmectq40egtpwstddejm:
-    'CUPI multi-sig contract',
+    'CUPI Multisig',
 };
 
 export const users = {
