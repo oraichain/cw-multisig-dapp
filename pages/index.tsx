@@ -1,5 +1,5 @@
 import type { NextPage } from 'next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import WalletLoader from 'components/WalletLoader';
 import Link from 'next/link';
@@ -8,13 +8,18 @@ import { contracts } from '../util/constants';
 const Home: NextPage = () => {
   const router = useRouter();
   const [address, setAddress] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  if (router.asPath !== router.route && router.route === '/') {
-    router.push(router.asPath);
-  }
+  useEffect(() => {
+    if (router.asPath !== router.route && router.route === '/') {
+      router.push(router.asPath);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   return (
-    <WalletLoader>
+    <WalletLoader loading={loading}>
       <div className="flex flex-col w-full">
         <div className="grid bg-base-100 place-items-center">
           <div className="flex w-full max-w-xl xl:max-w-2xl mt-4">

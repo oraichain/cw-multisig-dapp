@@ -229,9 +229,11 @@ const Proposal: NextPage = () => {
       <div className="flex flex-col w-full">
         <div className="grid bg-base-100 place-items-center">
           {!proposal ? (
-            <div className="text-center m-8">
-              No proposal with that ID found.
-            </div>
+            error && (
+              <div className="text-center m-8 text-lg font-bold">
+                No proposal with that ID found.
+              </div>
+            )
           ) : (
             <div className="container mx-auto max-w-lg text-left">
               <h1 className="text-3xl font-bold mb-8">{proposal.title}</h1>
