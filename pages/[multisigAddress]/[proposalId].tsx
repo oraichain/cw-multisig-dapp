@@ -106,9 +106,10 @@ const Proposal: NextPage = () => {
   const [transactionHash, setTransactionHash] = useState('');
 
   useEffect(() => {
-    if (!signingClient) {
+    if (!signingClient || !multisigAddress) {
       return;
     }
+
     setLoading(true);
     Promise.all([
       signingClient.queryContractSmart(multisigAddress, {

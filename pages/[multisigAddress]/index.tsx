@@ -38,7 +38,7 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    if (!signingClient) {
+    if (!signingClient || !multisigAddress) {
       return;
     }
     // max return is 30
@@ -52,10 +52,10 @@ const Home: NextPage = () => {
       .catch((err) => {
         console.log('err', err);
       });
-  }, [signingClient]);
+  }, [signingClient, multisigAddress]);
 
   useEffect(() => {
-    if (!signingClient) {
+    if (!signingClient || !multisigAddress) {
       setReversedProposals([]);
       setHideLoadMore(false);
       return;

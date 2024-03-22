@@ -84,6 +84,12 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       const [{ address }] = await offlineSigner.getAccounts();
       setWalletAddress(address);
     } catch (error) {
+      // make fallback client
+      const client = await SigningCosmWasmClient.connectWithSigner(
+        PUBLIC_RPC_ENDPOINT,
+        null
+      );
+      setSigningClient(client);
       setError(error);
     }
     setLoading(false);

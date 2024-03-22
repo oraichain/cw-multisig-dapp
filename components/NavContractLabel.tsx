@@ -11,7 +11,7 @@ function ContractLabel() {
   const [label, setLabel] = useState('');
 
   useEffect(() => {
-    if (multisigAddress.length === 0 || !signingClient) {
+    if (!multisigAddress || !signingClient) {
       setLabel('');
       return;
     }
