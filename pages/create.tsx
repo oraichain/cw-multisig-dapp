@@ -208,7 +208,7 @@ const CreateMultisig: NextPage = () => {
       const updateAdminMsgs: MsgUpdateAdminEncodeObject[] = [
         groupAddress,
         contractAddress,
-      ].map((contract) => ({
+      ].filter(address => address).map((contract) => ({
         typeUrl: '/cosmwasm.wasm.v1.MsgUpdateAdmin',
         value: MsgUpdateAdmin.fromPartial({
           sender: walletAddress,
