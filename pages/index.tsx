@@ -61,16 +61,14 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <div className="divider p-8 before:bg-secondary after:bg-secondary before:h-[1px] after:h-[1px]"></div>
-
-        <div className="grid bg-base-100 place-items-center">
-          <h1 className="text-4xl font-bold mb-8">Existing...</h1>
+        <div className="block">
+          <h1 className="text-4xl font-bold my-8">Existing...</h1>
           {Object.entries(contracts).map(([contract, label]) => (
             <Link
               title={contract}
               key={contract}
               href={`/${encodeURIComponent(contract)}`}
-              className="block btn btn-link btn-primary w-full max-w-full text-lg truncate normal-case"
+              className="btn btn-link btn-primary text-lg truncate normal-case"
             >
               {label}
             </Link>

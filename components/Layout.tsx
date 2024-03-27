@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
-import Head from 'next/head'
-import Nav from './Nav'
+import { ReactNode } from 'react';
+import Head from 'next/head';
+import Nav from './Nav';
 
-const PUBLIC_SITE_TITLE = process.env.NEXT_PUBLIC_SITE_TITLE
-const POWERED_BY_URL = 'https://orai.io'
+const PUBLIC_SITE_TITLE = process.env.NEXT_PUBLIC_SITE_TITLE;
+const POWERED_BY_URL = 'https://orai.io';
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -15,7 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       </Head>
 
       <Nav />
-      <main className="flex flex-col items-center justify-center w-full flex-1 p-2 md:px-20 text-center">
+      <main className="flex flex-col items-center justify-center container flex-1 p-2 md:px-20 text-center">
         {children}
       </main>
       <footer className="flex items-center justify-center w-full h-24 border-t mt-6">
@@ -25,5 +25,5 @@ export default function Layout({ children }: { children: ReactNode }) {
         </a>
       </footer>
     </div>
-  )
+  );
 }
