@@ -90,19 +90,27 @@ export const encodeProto = (obj: any) => {
   return obj;
 };
 
-export const decodeProto = (value: JsonObject) => {
+export const decodeProto = (
+  value: JsonObject,
+  decodeBase64Recursive = true,
+  path = ''
+) => {
   const typeUrl = value.type_url || value.typeUrl;
   if (typeUrl) {
     // decode proto
     return decodeProto(customRegistry.decode({ typeUrl, value: value.value }));
   }
   for (const k in value) {
-    if (typeof value[k] === 'string') {
+    if (
+      typeof value[k] === 'string' &&
+      (decodeBase64Recursive || (k === 'msg' && path.match(/wasm\.(?:\w+)$/)))
+    ) {
       try {
         value[k] = fromBinary(value[k]);
       } catch {}
     }
-    if (typeof value[k] === 'object') value[k] = decodeProto(value[k]);
+    if (typeof value[k] === 'object')
+      value[k] = decodeProto(value[k], decodeBase64Recursive, path + '.' + k);
   }
   if (value.msg instanceof Uint8Array)
     value.msg = JSON.parse(fromAscii(value.msg));

@@ -45,7 +45,7 @@ const ProposalCreate: NextPage = () => {
           setFormData({
             title,
             description,
-            messages: JSON.stringify(decodeProto(msgs), null, 2),
+            messages: JSON.stringify(decodeProto(msgs, false), null, 2),
           });
         });
     } else {
