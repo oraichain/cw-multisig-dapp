@@ -6,12 +6,12 @@ import { useRouter } from 'next/router';
 import ProposalCard from 'components/ProposalCard';
 import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3';
 import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm';
-import { findContract, users } from 'util/constants';
+import { nameToContracts, users } from 'util/constants';
 
 const Home: NextPage = () => {
   const router = useRouter();
   const slugAddress = router.query.multisigAddress as string;
-  const multisigAddress = findContract(router.query);
+  const multisigAddress = nameToContracts[slugAddress] ?? slugAddress;
   const [voters, setVoters] = useState<Member[]>([]);
   const { walletAddress, signingClient } = useSigningClient();
   const [reversedProposals, setReversedProposals] = useState<
@@ -142,7 +142,7 @@ const Home: NextPage = () => {
               id={`${id}`}
               status={status}
               expires_at={getExpiresAt(expires)}
-              multisigAddress={slugAddress}
+              slugAddress={slugAddress}
             />
           );
         })}

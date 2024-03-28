@@ -3,7 +3,7 @@ import Link from 'next/link';
 interface ProposalCardProps {
   title: string;
   id: string;
-  multisigAddress: string;
+  slugAddress: string;
   status: string;
   expires_at: string;
 }
@@ -83,12 +83,12 @@ const icons = {
 export default function ProposalCard({
   title,
   id,
-  multisigAddress,
+  slugAddress,
   status,
   expires_at,
 }: ProposalCardProps) {
   return (
-    <Link href={`/${multisigAddress}/${id}`}>
+    <Link href={`/${slugAddress}/${id}`}>
       <div className={`card mb-4`} title={`Expires at ${expires_at}`}>
         <div className="card-body p-2">
           <div className="text-md flex flex-row justify-between m-0">

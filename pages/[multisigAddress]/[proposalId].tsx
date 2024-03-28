@@ -10,7 +10,7 @@ import widgets from 'components/widgets';
 import { json } from '@codemirror/lang-json';
 import { decodeProto } from 'util/conversion';
 import { ExecuteInstruction } from '@cosmjs/cosmwasm-stargate';
-import { findContract, users } from 'util/constants';
+import { nameToContracts, users } from 'util/constants';
 
 function VoteButtons({
   onVoteYes = () => {},
@@ -98,7 +98,7 @@ function VoteButtons({
 const Proposal: NextPage = () => {
   const router = useRouter();
   const slugAddress = router.query.multisigAddress as string;
-  const multisigAddress = findContract(router.query);
+  const multisigAddress = nameToContracts[slugAddress] ?? slugAddress;
   const proposalId = parseInt(router.query.proposalId as string);
 
   const { walletAddress, signingClient } = useSigningClient();
@@ -268,7 +268,7 @@ const Proposal: NextPage = () => {
                 onVoteNo={isMember && handleVote.bind(null, 'no')}
                 onBack={(e) => {
                   e.preventDefault();
-                  router.push(`/${multisigAddress}`);
+                  router.push(`/${slugAddress}`);
                 }}
                 votes={votes}
                 walletAddress={walletAddress}

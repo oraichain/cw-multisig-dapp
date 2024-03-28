@@ -50,7 +50,3 @@ export const nameToContracts = Object.fromEntries(
     contract,
   ])
 );
-
-export const findContract = (query: ParsedUrlQuery) =>
-  nameToContracts[query.multisigAddress as string] ??
-  (query.multisigAddress as string);

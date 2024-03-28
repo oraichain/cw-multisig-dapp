@@ -11,7 +11,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
-import { findContract } from 'util/constants';
+import { nameToContracts } from 'util/constants';
 import { decodeProto } from 'util/conversion';
 
 const forms = FormFactory.Items.map((value) => FormFactory.createForm(value));
@@ -19,7 +19,8 @@ const options = forms.map(({ key, title }) => ({ value: key, label: title }));
 
 const ProposalCreate: NextPage = () => {
   const router = useRouter();
-  const multisigAddress = findContract(router.query);
+  const slugAddress = router.query.multisigAddress as string;
+  const multisigAddress = nameToContracts[slugAddress] ?? slugAddress;
   const id = (router.query.id || '') as string;
   const { walletAddress, signingClient } = useSigningClient();
   const [transactionHash, setTransactionHash] = useState('');
@@ -136,7 +137,7 @@ const ProposalCreate: NextPage = () => {
                 className="mt-4 box-border px-4 py-2 btn btn-primary"
                 onClick={(e) => {
                   e.preventDefault();
-                  router.push(`/${multisigAddress}/${proposalID}`);
+                  router.push(`/${slugAddress}/${proposalID}`);
                 }}
               >
                 View Proposal &#8599;
