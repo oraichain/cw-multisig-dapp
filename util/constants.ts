@@ -1,5 +1,3 @@
-import type { ParsedUrlQuery } from 'querystring';
-
 export const contracts = {
   orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0: 'Oraichain:Foundation Multisig',
   orai1dugk9jpxwkyd0gt20344vu3ltx6083zjkv5pygt8hhtv8u420k7s32wvky:
