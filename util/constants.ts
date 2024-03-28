@@ -1,3 +1,5 @@
+import type { ParsedUrlQuery } from 'querystring';
+
 export const contracts = {
   orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0: 'Oraichain:Foundation Multisig',
   orai1dugk9jpxwkyd0gt20344vu3ltx6083zjkv5pygt8hhtv8u420k7s32wvky:
@@ -32,3 +34,23 @@ export const users = {
   orai1wzqgtqtyzjm8js2tucxxln0h80v3x55vhjdfft: 'Trung Nguyen',
   orai14h0n2nlfrfz8tn9usfyjrxqd23fhj9a0ec0pm7: 'Duc Pham',
 };
+
+export const slugify = (text: string) =>
+  text
+    .normalize('NFKD')
+    .trim()
+    .toLowerCase()
+    .replace(/[^\w\s-:]+/g, '')
+    .replace(/[-:_\s]+/g, '-')
+    .replace(/-$/g, '');
+
+export const nameToContracts = Object.fromEntries(
+  Object.entries(contracts).map(([contract, label]) => [
+    slugify(label),
+    contract,
+  ])
+);
+
+export const findContract = (query: ParsedUrlQuery) =>
+  nameToContracts[query.multisigAddress as string] ??
+  (query.multisigAddress as string);

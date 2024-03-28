@@ -11,6 +11,7 @@ import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
+import { findContract } from 'util/constants';
 import { decodeProto } from 'util/conversion';
 
 const forms = FormFactory.Items.map((value) => FormFactory.createForm(value));
@@ -18,7 +19,7 @@ const options = forms.map(({ key, title }) => ({ value: key, label: title }));
 
 const ProposalCreate: NextPage = () => {
   const router = useRouter();
-  const multisigAddress = (router.query.multisigAddress || '') as string;
+  const multisigAddress = findContract(router.query);
   const id = (router.query.id || '') as string;
   const { walletAddress, signingClient } = useSigningClient();
   const [transactionHash, setTransactionHash] = useState('');

@@ -6,11 +6,12 @@ import { useRouter } from 'next/router';
 import ProposalCard from 'components/ProposalCard';
 import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3';
 import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm';
-import { users } from 'util/constants';
+import { findContract, users } from 'util/constants';
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const multisigAddress = router.query.multisigAddress as string;
+  const slugAddress = router.query.multisigAddress as string;
+  const multisigAddress = findContract(router.query);
   const [voters, setVoters] = useState<Member[]>([]);
   const { walletAddress, signingClient } = useSigningClient();
   const [reversedProposals, setReversedProposals] = useState<
@@ -117,9 +118,7 @@ const Home: NextPage = () => {
           {voters.some((m) => m.addr === walletAddress) && (
             <button
               className="btn btn-primary btn-sm text-lg"
-              onClick={() =>
-                router.push(`/${encodeURIComponent(multisigAddress)}/create`)
-              }
+              onClick={() => router.push(`/${slugAddress}/create`)}
             >
               + Create
             </button>
@@ -143,7 +142,7 @@ const Home: NextPage = () => {
               id={`${id}`}
               status={status}
               expires_at={getExpiresAt(expires)}
-              multisigAddress={multisigAddress}
+              multisigAddress={slugAddress}
             />
           );
         })}

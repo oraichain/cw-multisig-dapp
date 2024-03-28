@@ -88,7 +88,7 @@ export default function ProposalCard({
   expires_at,
 }: ProposalCardProps) {
   return (
-    <Link href={`/${encodeURIComponent(multisigAddress)}/${id}`}>
+    <Link href={`/${multisigAddress}/${id}`}>
       <div className={`card mb-4`} title={`Expires at ${expires_at}`}>
         <div className="card-body p-2">
           <div className="text-md flex flex-row justify-between m-0">

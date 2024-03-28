@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import WalletLoader from 'components/WalletLoader';
 import Link from 'next/link';
 import { contracts } from '../util/constants';
+import { slugify } from '../util/constants';
 
 const updateVisit = (contract: string) => {
   window.localStorage.setItem(
@@ -81,7 +82,7 @@ const Home: NextPage = () => {
               onClick={() => updateVisit(contract)}
               title={contract}
               key={contract}
-              href={`/${encodeURIComponent(contract)}`}
+              href={`/${slugify(contracts[contract])}`}
               className="btn btn-link btn-primary text-lg truncate normal-case"
             >
               {contracts[contract]}

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useSigningClient } from 'contexts/cosmwasm';
-import { contracts } from 'util/constants';
+import { contracts, findContract } from 'util/constants';
 
 function ContractLabel() {
   const router = useRouter();
-  const multisigAddress = (router.query.multisigAddress || '') as string;
+  const slugAddress = router.query.multisigAddress as string;
+  const multisigAddress = findContract(router.query);
+
   const { signingClient } = useSigningClient();
   const [label, setLabel] = useState('');
 
@@ -45,7 +47,7 @@ function ContractLabel() {
           d="M9 5l7 7-7 7"
         ></path>
       </svg>
-      <Link href={`/${encodeURIComponent(multisigAddress)}`}>
+      <Link href={`/${slugAddress}`}>
         <span className="capitalize hover:underline text-2xl">{label}</span>
       </Link>
     </div>
