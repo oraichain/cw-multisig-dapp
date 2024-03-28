@@ -5,16 +5,29 @@ import WalletLoader from 'components/WalletLoader';
 import Link from 'next/link';
 import { contracts } from '../util/constants';
 
+const updateVisit = (contract: string) => {
+  window.localStorage.setItem(
+    contract,
+    String(parseInt(window.localStorage.getItem(contract) || '0') + 1)
+  );
+};
+
 const Home: NextPage = () => {
   const router = useRouter();
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(true);
+  const [visits, setVisits] = useState([]);
 
   useEffect(() => {
     if (router.asPath !== router.route && router.route === '/') {
       router.push(router.asPath);
     } else {
       setLoading(false);
+      setVisits(
+        Object.keys(contracts)
+          .map((contract) => [contract, localStorage.getItem(contract) || '0'])
+          .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))
+      );
     }
   }, []);
 
@@ -63,14 +76,15 @@ const Home: NextPage = () => {
 
         <div className="block">
           <h1 className="text-4xl font-bold my-8">Existing...</h1>
-          {Object.entries(contracts).map(([contract, label]) => (
+          {visits.map(([contract]) => (
             <Link
+              onClick={() => updateVisit(contract)}
               title={contract}
               key={contract}
               href={`/${encodeURIComponent(contract)}`}
               className="btn btn-link btn-primary text-lg truncate normal-case"
             >
-              {label}
+              {contracts[contract]}
             </Link>
           ))}
         </div>
