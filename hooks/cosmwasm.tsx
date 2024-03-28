@@ -49,6 +49,10 @@ export const GAS_PRICE = GasPrice.fromString(
     process.env.NEXT_PUBLIC_STAKING_DENOM
 );
 
+export const POLL_INTERVAL = parseInt(
+  process.env.NEXT_PUBLIC_POLL_INTERVAL || '3000'
+);
+
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState('');
   const [signingClient, setSigningClient] =
@@ -76,6 +80,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
         offlineSigner,
         {
           gasPrice: GAS_PRICE,
+          broadcastPollIntervalMs: POLL_INTERVAL,
         }
       );
       setSigningClient(client);
