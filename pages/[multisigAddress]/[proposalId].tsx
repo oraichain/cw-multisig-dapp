@@ -74,18 +74,22 @@ function VoteButtons({
           {'< Proposals'}
         </button>
 
-        <button
-          className="box-border px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
-          onClick={onVoteYes}
-        >
-          Sign
-        </button>
-        <button
-          className="box-border px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
-          onClick={onVoteNo}
-        >
-          Reject
-        </button>
+        {onVoteYes && (
+          <button
+            className="box-border px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
+            onClick={onVoteYes}
+          >
+            Sign
+          </button>
+        )}
+        {onVoteNo && (
+          <button
+            className="box-border px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
+            onClick={onVoteNo}
+          >
+            Reject
+          </button>
+        )}
       </div>
     </>
   );
@@ -102,6 +106,7 @@ const Proposal: NextPage = () => {
   const [error, setError] = useState('');
   const [proposal, setProposal] = useState<ProposalResponse | null>(null);
   const [votes, setVotes] = useState([]);
+  const [voters, setVoters] = useState<Member[]>([]);
   const [timestamp, setTimestamp] = useState(new Date());
   const [transactionHash, setTransactionHash] = useState('');
 
@@ -118,11 +123,15 @@ const Proposal: NextPage = () => {
       signingClient.queryContractSmart(multisigAddress, {
         list_votes: { proposal_id: proposalId },
       }),
+      signingClient.queryContractSmart(multisigAddress, {
+        list_voters: { limit: 30 },
+      }),
     ])
       .then((values) => {
-        const [proposal, { votes }] = values;
+        const [proposal, { votes }, { voters }] = values;
         setProposal(proposal);
         setVotes(votes);
+        setVoters(voters);
       })
       .catch((err) => {
         setError(err.message);
@@ -224,6 +233,8 @@ const Proposal: NextPage = () => {
     setLoading(false);
   };
 
+  const isMember = voters.some((m) => m.addr === walletAddress);
+
   return (
     <WalletLoader loading={loading}>
       <div className="flex flex-col w-full">
@@ -254,8 +265,8 @@ const Proposal: NextPage = () => {
               </div>
 
               <VoteButtons
-                onVoteYes={handleVote.bind(null, 'yes')}
-                onVoteNo={handleVote.bind(null, 'no')}
+                onVoteYes={isMember && handleVote.bind(null, 'yes')}
+                onVoteNo={isMember && handleVote.bind(null, 'no')}
                 onBack={(e) => {
                   e.preventDefault();
                   router.push(`/${multisigAddress}`);
@@ -279,7 +290,7 @@ const Proposal: NextPage = () => {
                 </div>
               )}
 
-              {proposal.status === 'passed' && (
+              {proposal.status === 'passed' && isMember && (
                 <div className="flex justify-between flex-col content-center my-8">
                   <h4 className="mb-2">Execute custom messages:</h4>
                   <widgets.jsoneditor
@@ -308,7 +319,7 @@ const Proposal: NextPage = () => {
                       Use as template
                     </button>
                   )}
-                  {proposal.status === 'passed' && (
+                  {proposal.status === 'passed' && isMember && (
                     <button
                       className="box-border px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
                       onClick={handleExecute}
@@ -316,7 +327,7 @@ const Proposal: NextPage = () => {
                       Execute
                     </button>
                   )}
-                  {proposal.status === 'rejected' && (
+                  {proposal.status === 'rejected' && isMember && (
                     <button
                       className="box-border px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
                       onClick={handleClose}

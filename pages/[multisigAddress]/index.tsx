@@ -8,17 +8,6 @@ import { ProposalListResponse, ProposalResponse, Timestamp } from 'types/cw3';
 import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm';
 import { users } from 'util/constants';
 
-// TODO: review union Expiration from types/cw3
-type Expiration = {
-  at_height?: number;
-  at_time?: Timestamp;
-};
-
-type Member = {
-  addr: string;
-  weight: number;
-};
-
 const Home: NextPage = () => {
   const router = useRouter();
   const multisigAddress = router.query.multisigAddress as string;
