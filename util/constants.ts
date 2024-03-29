@@ -6,6 +6,8 @@ export const contracts = {
     'Oraichain: DAO Multisig',
   orai1lq2tqyvlyg3thedv0cf08m8ea880z298sqd7p33z57cktlgc9whqrrg3z2:
     'Oraichain-Labs-LP1',
+  orai1y4rx6u77vgrje0y99h3vxtsrqepayuk284ss2az8y6lcc6dr30eqvjz057:
+    'Oraichain-Labs-LP2',
   orai1kksknvjy8hjkxlqzwqyghll7djz3854huqn7up4d20ad6hp5sglsyyfe4k:
     'DeFi Fund Management Multisig',
   orai1wn0qfdhn7xfn7fvsx6fme96x4mcuzrm9wm3mvlunp5e737rpgt4qndmfv8:
