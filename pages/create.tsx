@@ -1,15 +1,22 @@
-import type { NextPage } from 'next';
-import { FormEvent } from 'react';
+import {
+  MsgExecuteContractEncodeObject,
+  MsgUpdateAdminEncodeObject,
+} from '@cosmjs/cosmwasm-stargate';
+import { toUtf8 } from '@cosmjs/encoding';
+import { EncodeObject } from '@cosmjs/proto-signing';
+import { isDeliverTxFailure } from '@cosmjs/stargate';
+import LineAlert from 'components/LineAlert';
 import WalletLoader from 'components/WalletLoader';
 import { useSigningClient } from 'contexts/cosmwasm';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import LineAlert from 'components/LineAlert';
-import { InstantiateMsg } from 'types/cw3';
+import {
+  MsgExecuteContract,
+  MsgUpdateAdmin,
+} from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 import { MULTISIG_CODE_ID } from 'hooks/cosmwasm';
-import { MsgUpdateAdminEncodeObject } from '@cosmjs/cosmwasm-stargate';
-import { MsgUpdateAdmin } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
-import { isDeliverTxFailure, logs } from '@cosmjs/stargate';
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { FormEvent, useState } from 'react';
+import { InstantiateMsg } from 'types/cw3';
 
 function AddressRow({
   idx,
@@ -205,20 +212,47 @@ const CreateMultisig: NextPage = () => {
 
     setLoading('change-admin');
     try {
-      const updateAdminMsgs: MsgUpdateAdminEncodeObject[] = [
-        groupAddress,
-        contractAddress,
-      ].filter(address => address).map((contract) => ({
-        typeUrl: '/cosmwasm.wasm.v1.MsgUpdateAdmin',
-        value: MsgUpdateAdmin.fromPartial({
-          sender: walletAddress,
-          contract,
-          newAdmin: contractAddress,
-        }),
-      }));
+      // change admin of multisig to multisig
+      const messages: EncodeObject[] = [
+        {
+          typeUrl: '/cosmwasm.wasm.v1.MsgUpdateAdmin',
+          value: MsgUpdateAdmin.fromPartial({
+            sender: walletAddress,
+            contract: contractAddress,
+            newAdmin: contractAddress,
+          }),
+        } as MsgUpdateAdminEncodeObject,
+      ];
+
+      if (groupAddress) {
+        // change admin of group address to multisig
+        messages.push({
+          typeUrl: '/cosmwasm.wasm.v1.MsgUpdateAdmin',
+          value: MsgUpdateAdmin.fromPartial({
+            sender: walletAddress,
+            contract: groupAddress,
+            newAdmin: contractAddress,
+          }),
+        } as MsgUpdateAdminEncodeObject);
+
+        // change admin logic of group address to multisig
+        messages.push({
+          typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+          value: MsgExecuteContract.fromPartial({
+            sender: walletAddress,
+            contract: groupAddress,
+            msg: toUtf8(
+              JSON.stringify({
+                update_admin: { admin: contractAddress },
+              })
+            ),
+          }),
+        } as MsgExecuteContractEncodeObject);
+      }
+
       const result = await signingClient.signAndBroadcast(
         walletAddress,
-        updateAdminMsgs,
+        messages,
         'auto'
       );
       if (isDeliverTxFailure(result)) {
