@@ -4,6 +4,8 @@ export const contracts = {
     'Oraichain:Ecosystem Multisig',
   orai1fwq0ct8ww0hm574vsdrhj7p5h0rd0vcz2hxsd0hfufwdlw4u78ksp4wj4y:
     'Oraichain: DAO Multisig',
+  orai1v9zcn396nwztsuc2q0a38rrg0dx25s3097wrd9y3lvmq8x3rehlsyeazsz:
+    'Oraichain-Labs-Treasury',
   orai1lq2tqyvlyg3thedv0cf08m8ea880z298sqd7p33z57cktlgc9whqrrg3z2:
     'Oraichain-Labs-LP1',
   orai1y4rx6u77vgrje0y99h3vxtsrqepayuk284ss2az8y6lcc6dr30eqvjz057:
