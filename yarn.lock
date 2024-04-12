@@ -561,10 +561,10 @@
   resolved "https://registry.yarnpkg.com/@oraichain/common-contracts-sdk/-/common-contracts-sdk-1.0.31.tgz#595f93b168438d69d64896909b37855c9afc92fb"
   integrity sha512-s8H20RXy5gCnu3DnM7L5ClQyj2mdQpbSBpZrXCpIAX9qY0LKsDdZG3sYaDQ8+VN333jz9Pp/qGWdFSYD+6PBsg==
 
-"@oraichain/cosmwasm-vm-js@^0.2.80":
-  version "0.2.80"
-  resolved "https://registry.yarnpkg.com/@oraichain/cosmwasm-vm-js/-/cosmwasm-vm-js-0.2.80.tgz#517e4243ce98a2f39c15bf4a2a29ad340c855eed"
-  integrity sha512-Rkijs17HScM7c18bB7RX1dIjQ3iJS7Z0r27r90I0voYBkahbbl+1OumkWqC+JS+i5CN04Qjov72Vh3eYlzaK9Q==
+"@oraichain/cosmwasm-vm-js@^0.2.85":
+  version "0.2.85"
+  resolved "https://registry.yarnpkg.com/@oraichain/cosmwasm-vm-js/-/cosmwasm-vm-js-0.2.85.tgz#078da157a2b87b2a388368f16de3450cc821ecd6"
+  integrity sha512-tpT+bX7nydMsPajOGGFhzOGhMTtQkV0S4RpWoOk6p4JPYUNATo83DxomsZMwtts+jHAPgQ4NWtKNZULDSZ47+Q==
   dependencies:
     "@cosmjs/amino" "^0.31.0"
     "@cosmjs/crypto" "^0.31.0"
@@ -575,17 +575,17 @@
     elliptic "^6.5.4"
     secp256k1 "^4.0.3"
 
-"@oraichain/cw-simulate@^2.8.77":
-  version "2.8.77"
-  resolved "https://registry.yarnpkg.com/@oraichain/cw-simulate/-/cw-simulate-2.8.77.tgz#dbf5f0b9d1dc9e402ac12e0f19d329ddfe634c47"
-  integrity sha512-IXYqFzwRusGCQemTS82iyzcDDMqaSj/RyQt2fLQDqnGfQbfKcTnscJrQyjwhWT/ALTUrZCNJhyNE++A4LW1GZA==
+"@oraichain/cw-simulate@^2.8.85":
+  version "2.8.85"
+  resolved "https://registry.yarnpkg.com/@oraichain/cw-simulate/-/cw-simulate-2.8.85.tgz#8bb1e9f9237ba500af70d6cb9f767d73fb768241"
+  integrity sha512-hKow7gg2q3V54MQV6nqzC28hlYWNxjHTfiJuRPBtWKL7i1Am0W0+VnP4ZyiROhnXf7AWzsfYJmLWrqaOYCsMiA==
   dependencies:
     "@cosmjs/amino" "^0.31.0"
     "@cosmjs/cosmwasm-stargate" "^0.31.0"
     "@cosmjs/crypto" "^0.31.0"
     "@cosmjs/encoding" "^0.31.0"
     "@kiruse/serde" "^0.8.0-rc.6"
-    "@oraichain/cosmwasm-vm-js" "^0.2.80"
+    "@oraichain/cosmwasm-vm-js" "^0.2.85"
     eventemitter3 "^5.0.0"
     protobufjs "^7.2.3"
     ts-results "^3.3.0"
@@ -702,18 +702,6 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
-
-"@types/lodash.clonedeep@^4.5.6":
-  version "4.5.6"
-  resolved "https://registry.yarnpkg.com/@types/lodash.clonedeep/-/lodash.clonedeep-4.5.6.tgz#3b6c40a0affe0799a2ce823b440a6cf33571d32b"
-  integrity sha512-cE1jYr2dEg1wBImvXlNtp0xDoS79rfEdGozQVgliDZj1uERH4k+rmEMTudP9b4VQ8O6nRb5gPqft0QzEQGMQgA==
-  dependencies:
-    "@types/lodash" "*"
-
-"@types/lodash@*":
-  version "4.14.172"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.172.tgz#aad774c28e7bfd7a67de25408e03ee5a8c3d028a"
-  integrity sha512-/BHF5HAx3em7/KkzVKm3LrsD6HZAXuXO1AJZQ3cRRBZj4oHZDviWPYu0aEplAqDFNHZPW6d3G7KN+ONcCCC7pw==
 
 "@types/long@^4.0.1":
   version "4.0.1"

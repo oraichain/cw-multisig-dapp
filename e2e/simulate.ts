@@ -14,12 +14,9 @@ const downloadState = new DownloadState(
 );
 const senderAddress = 'orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0';
 
-// ;(async () => {
-//   await downloadState.saveState(multisigAddr)
-//   await downloadState.saveState(groupAddr)
-// })()
-
 const start = async () => {
+  // await downloadState.saveState(multisigAddr);
+  // await downloadState.saveState(groupAddr);
   const client = new SimulateCosmWasmClient({
     chainId: 'Oraichain',
     bech32Prefix: 'orai',
@@ -50,7 +47,7 @@ const start = async () => {
     startAfter: 360,
   });
 
-  // console.log('proposals: ', proposals);
+  console.log('proposals: ', proposals);
   const config = await multisigClient.config();
   console.log('config: ', config);
 
@@ -99,14 +96,13 @@ const start = async () => {
   try {
     await unauthorizedExecutor.vote({ proposalId, vote: 'yes' });
   } catch (error) {
-    console.log('should receive error');
-    console.log({ error });
+    console.log('should receive error', error.message);
   }
   await voters[2].vote({ proposalId, vote: 'yes' });
   try {
     await unauthorizedExecutor.execute({ proposalId });
   } catch (error) {
-    console.log({ error });
+    console.log('should receive error', error.message);
   }
 
   const result = await voters[2].execute({ proposalId });
