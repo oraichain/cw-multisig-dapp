@@ -18,19 +18,29 @@ const Home: NextPage = () => {
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(true);
   const [visits, setVisits] = useState([]);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     if (router.asPath !== router.route && router.route === '/') {
       router.push(router.asPath);
     } else {
       setLoading(false);
+
+      const filterContracts = filter
+        ? Object.entries(contracts).filter(([contract, label]) =>
+            label.toLowerCase().includes(filter)
+          )
+        : Object.entries(contracts);
       setVisits(
-        Object.keys(contracts)
-          .map((contract) => [contract, localStorage.getItem(contract) || '0'])
+        filterContracts
+          .map(([contract, label]) => [
+            contract,
+            localStorage.getItem(contract) || '0',
+          ])
           .sort((a, b) => parseInt(b[1]) - parseInt(a[1]))
       );
     }
-  }, []);
+  }, [filter]);
 
   return (
     <WalletLoader loading={loading}>
@@ -42,7 +52,6 @@ const Home: NextPage = () => {
                 id="multisig-address"
                 className="input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg"
                 placeholder="Multisig contract address..."
-                step="0.1"
                 value={address}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') {
@@ -75,8 +84,35 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <div className="block">
-          <h1 className="text-4xl font-bold my-8">Existing...</h1>
+        <div className="block mt-4">
+          <div className="grid bg-base-100 place-items-center my-4">
+            <div className="flex w-full max-w-xl xl:max-w-2xl mt-4">
+              <div className="relative rounded-full shadow-sm w-full">
+                <input
+                  id="filter-address"
+                  className="input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg"
+                  placeholder="Existing..."
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      setFilter(event.currentTarget.value.trim().toLowerCase());
+                    }
+                  }}
+                />
+                <button
+                  className="absolute top-0 right-0 bottom-0 px-8 py-5 rounded-r-full bg-primary text-base-100 text-xl"
+                  onClick={() => {
+                    const inputEl = document.getElementById(
+                      'filter-address'
+                    ) as HTMLInputElement;
+                    setFilter(inputEl.value.trim().toLowerCase());
+                  }}
+                >
+                  SEARCH
+                </button>
+              </div>
+            </div>
+          </div>
+
           {visits.map(([contract]) => (
             <Link
               onClick={() => updateVisit(contract)}
