@@ -6,14 +6,22 @@ export const contracts = {
     'Oraichain: DAO Multisig',
   orai1v9zcn396nwztsuc2q0a38rrg0dx25s3097wrd9y3lvmq8x3rehlsyeazsz:
     'Oraichain-Labs-Treasury',
+  orai1hpfrkt4rs9p8pcgwjy8juc9ewr7hgu8365trc7lf37lsyq44yhrs2pj7n8:
+    'Oraichain-Labs-Operation-Cash',
   orai1lq2tqyvlyg3thedv0cf08m8ea880z298sqd7p33z57cktlgc9whqrrg3z2:
     'Oraichain-Labs-LP1',
   orai1y4rx6u77vgrje0y99h3vxtsrqepayuk284ss2az8y6lcc6dr30eqvjz057:
     'Oraichain-Labs-LP2',
+  orai1grmh060ugaxkewwe5c7vg6pmc9q70lkucxp4vf2n9p2vk7htczkq3hdtmu:
+    'DeFi-Multisig-Fund-Treasury',
+  orai19nns6szdkx9zrayp3yy6jfwgpm2xe4q3dpnftsxvd9xmpd2h9ejqm9z88h:
+    'DeFi-Multisig-LP',
   orai1kksknvjy8hjkxlqzwqyghll7djz3854huqn7up4d20ad6hp5sglsyyfe4k:
     'DeFi Fund Management Multisig',
   orai1wn0qfdhn7xfn7fvsx6fme96x4mcuzrm9wm3mvlunp5e737rpgt4qndmfv8:
     'DeFi Operation Multisig',
+  orai15uk2u2mrxusz3aft3asuc5fcqku884dqwffkqfdxmyqvx23atansht6zc7:
+    'ORAIX-Team-Operation-Cash',
   orai1nk22lezd49a3pkmltx3yyjmzk79nef3cdsag7q3tll6kv9xqcyzqut9486:
     'OCH-Fund-Oraichain Multisig',
   orai1duyupjercjkhrjr33s0nkq0hr0y59e3cufjpavehul9c92626arspytrjf:
