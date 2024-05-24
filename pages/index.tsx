@@ -89,26 +89,12 @@ const Home: NextPage = () => {
             <div className="flex w-full max-w-xl xl:max-w-2xl mt-4">
               <div className="relative rounded-full shadow-sm w-full">
                 <input
-                  id="filter-address"
-                  className="input input-bordered focus:input-primary input-lg w-full pr-24 rounded-full text-center font-mono text-lg"
-                  placeholder="Existing..."
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter') {
-                      setFilter(event.currentTarget.value.trim().toLowerCase());
-                    }
+                  className="input input-bordered focus:input-primary input-lg w-full rounded-full text-center font-mono text-lg"
+                  placeholder="Type to search..."
+                  onChange={(event) => {
+                    setFilter(event.currentTarget.value.trim().toLowerCase());
                   }}
                 />
-                <button
-                  className="absolute top-0 right-0 bottom-0 px-8 py-5 rounded-r-full bg-primary text-base-100 text-xl"
-                  onClick={() => {
-                    const inputEl = document.getElementById(
-                      'filter-address'
-                    ) as HTMLInputElement;
-                    setFilter(inputEl.value.trim().toLowerCase());
-                  }}
-                >
-                  SEARCH
-                </button>
               </div>
             </div>
           </div>
