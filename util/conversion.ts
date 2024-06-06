@@ -95,6 +95,7 @@ export const decodeProto = (
   decodeBase64Recursive = true,
   path = ''
 ) => {
+  if (!value) return '';
   const typeUrl = value.type_url || value.typeUrl;
   if (typeUrl) {
     // decode proto
