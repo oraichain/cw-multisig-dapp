@@ -1,9 +1,9 @@
-import { toBinary } from '@cosmjs/cosmwasm-stargate'
-import GenericForm from './GenericForm'
+import { toBinary } from '@cosmjs/cosmwasm-stargate';
+import GenericForm from './GenericForm';
 
 export default class ChangeMembers extends GenericForm {
   constructor(key: string) {
-    super(key)
+    super(key);
     const uiSchema = {
       new_members: {
         items: {
@@ -20,7 +20,7 @@ export default class ChangeMembers extends GenericForm {
       'ui:submitButtonOptions': {
         submitText: 'Submit',
       },
-    }
+    };
     const schema = {
       properties: {
         new_members: {
@@ -52,17 +52,21 @@ export default class ChangeMembers extends GenericForm {
           default: [],
         },
       },
-    }
+    };
 
-    super.init('Update Members', uiSchema, schema)
+    super.init('Update Members', uiSchema, schema);
   }
 
-  protected override processMessages({ new_members, remove_members }) {
+  protected override processMessages({
+    new_members,
+    remove_members,
+    groupAddress,
+  }) {
     const msgs = [
       {
         wasm: {
           execute: {
-            contract_addr: window.GroupAddress,
+            contract_addr: groupAddress,
             msg: toBinary({
               update_members: { add: new_members, remove: remove_members },
             }),
@@ -70,8 +74,8 @@ export default class ChangeMembers extends GenericForm {
           },
         },
       },
-    ]
+    ];
 
-    return msgs
+    return msgs;
   }
 }

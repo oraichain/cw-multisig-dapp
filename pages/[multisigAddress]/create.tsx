@@ -28,10 +28,31 @@ const ProposalCreate: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [proposalID, setProposalID] = useState('');
   const [proposalForm, setProposalForm] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState();
+  const [groupAddress, setGroupAddress] = useState();
 
   useEffect(() => {
     if (!signingClient || !multisigAddress) return;
+
+    signingClient
+      .queryContractSmart(multisigAddress, {
+        config: {},
+      })
+      .then((res) => {
+        setGroupAddress(res.group_addr);
+      });
+  }, [!!signingClient]);
+
+  useEffect(() => {
+    if (!signingClient || !multisigAddress) return;
+
+    signingClient
+      .queryContractSmart(multisigAddress, {
+        config: {},
+      })
+      .then((res) => {
+        setGroupAddress(res.group_addr);
+      });
 
     if (id) {
       signingClient
@@ -100,7 +121,7 @@ const ProposalCreate: NextPage = () => {
             {form && (
               <Form
                 disabled={loading}
-                formData={formData}
+                formData={{ ...formData, multisigAddress, groupAddress }}
                 readonly={complete}
                 widgets={widgets}
                 validator={validator}

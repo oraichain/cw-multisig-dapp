@@ -3,15 +3,15 @@ import type {
   RJSFSchema,
   StrictRJSFSchema,
   UiSchema,
-} from '@rjsf/utils'
+} from '@rjsf/utils';
 
 export default class GenericForm<
   T = any,
   S extends StrictRJSFSchema = RJSFSchema,
   F extends FormContextType = any
 > {
-  public readonly props: { uiSchema: UiSchema<T, S, F>; schema: RJSFSchema }
-  public title: string
+  public readonly props: { uiSchema: UiSchema<T, S, F>; schema: RJSFSchema };
+  public title: string;
   public constructor(readonly key: string) {
     this.props = {
       uiSchema: {
@@ -38,7 +38,7 @@ export default class GenericForm<
           },
         },
       },
-    }
+    };
   }
 
   protected init(
@@ -46,28 +46,28 @@ export default class GenericForm<
     uiSchema: UiSchema<T, S, F>,
     schema: StrictRJSFSchema
   ) {
-    this.title = title
-    Object.assign(this.props.uiSchema, uiSchema)
+    this.title = title;
+    Object.assign(this.props.uiSchema, uiSchema);
     if (Array.isArray(schema.required)) {
       this.props.schema.required = [
         ...new Set(this.props.schema.required.concat(schema.required)),
-      ]
+      ];
     }
     if (schema.properties) {
-      Object.assign(this.props.schema.properties, schema.properties)
+      Object.assign(this.props.schema.properties, schema.properties);
     }
   }
 
   protected processMessages(data: any) {
-    return data
+    return data;
   }
 
   public processData({ title, description = '', ...data }) {
     try {
-      const msgs = this.processMessages(data)
-      return { title, description, msgs }
+      const msgs = this.processMessages(data);
+      return { title, description, msgs };
     } catch (ex) {
-      alert(ex.toString())
+      alert(ex.toString());
     }
   }
 }

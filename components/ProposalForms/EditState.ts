@@ -1,9 +1,9 @@
-import { toBinary } from '@cosmjs/cosmwasm-stargate'
-import GenericForm from './GenericForm'
+import { toBinary } from '@cosmjs/cosmwasm-stargate';
+import GenericForm from './GenericForm';
 
 export default class EditState extends GenericForm {
   constructor(key: string) {
-    super(key)
+    super(key);
     const uiSchema = {
       group_addr: {
         'ui:placeholder': 'New Group Address',
@@ -11,7 +11,7 @@ export default class EditState extends GenericForm {
       'ui:submitButtonOptions': {
         submitText: 'Submit',
       },
-    }
+    };
 
     const schema = {
       required: ['group_addr'],
@@ -23,28 +23,28 @@ export default class EditState extends GenericForm {
           title: 'New Group Address',
         },
       },
-    }
+    };
 
     super.init(
       'Edit Multisig State (Update new group address, etc...)',
       uiSchema,
       schema
-    )
+    );
   }
 
-  protected override processMessages({ group_addr }) {
+  protected override processMessages({ group_addr, multisigAddress }) {
     const msgs = [
       {
         wasm: {
           execute: {
-            contract_addr: window.MultisigAddress,
+            contract_addr: multisigAddress,
             msg: toBinary({ edit_state: { group_addr } }),
             send: [],
           },
         },
       },
-    ]
+    ];
 
-    return msgs
+    return msgs;
   }
 }
