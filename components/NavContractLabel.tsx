@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useSigningClient } from 'contexts/cosmwasm';
-import { contracts, nameToContracts } from 'util/constants';
+import { contracts, nameToContracts, slugify } from 'util/constants';
 
 function ContractLabel() {
   const router = useRouter();
   const slugAddress = router.query.multisigAddress as string;
   const multisigAddress = nameToContracts[slugAddress] ?? slugAddress;
+  const [serverSlug, setServerSlug] = useState('');
 
   const { signingClient } = useSigningClient();
   const [label, setLabel] = useState('');
@@ -32,6 +33,9 @@ function ContractLabel() {
     return <div className="flex items-center" />;
   }
 
+  // test if there is slug
+  const testSlug = slugify(label);
+
   return (
     <div className="flex items-center">
       <svg
@@ -47,7 +51,7 @@ function ContractLabel() {
           d="M9 5l7 7-7 7"
         ></path>
       </svg>
-      <Link href={`/${slugAddress}`}>
+      <Link href={`/${nameToContracts[testSlug] ? testSlug : slugAddress}`}>
         <span className="capitalize hover:underline text-2xl">{label}</span>
       </Link>
     </div>
