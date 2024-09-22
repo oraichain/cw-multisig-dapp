@@ -1,9 +1,11 @@
 export const contracts = {
   orai1fs25usz65tsryf0f8d5cpfmqgr0xwup4kjqpa0: 'Oraichain:Foundation Multisig',
-  orai1dugk9jpxwkyd0gt20344vu3ltx6083zjkv5pygt8hhtv8u420k7s32wvky:
-    'Oraichain:Ecosystem Multisig',
   orai1mzyjvrgsg8tvrmw9hfdea0extyx8mmkmk07qg52lpygwjkhz3gqqcr3e4x:
     'Oraichain-Foundation-ORAI-Allocation',
+  orai1ht5t8hc4q3tkw30pv76azygpkpys0mm8mtxpcc83nqtz7fh496nsuz4daw:
+    'Oraichain-Foundation-Operation-Cash',
+  orai1dugk9jpxwkyd0gt20344vu3ltx6083zjkv5pygt8hhtv8u420k7s32wvky:
+    'Oraichain:Ecosystem Multisig',
   orai1fwq0ct8ww0hm574vsdrhj7p5h0rd0vcz2hxsd0hfufwdlw4u78ksp4wj4y:
     'Oraichain: DAO Multisig',
   orai1v9zcn396nwztsuc2q0a38rrg0dx25s3097wrd9y3lvmq8x3rehlsyeazsz:
