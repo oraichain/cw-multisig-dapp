@@ -38,6 +38,8 @@ export const contracts = {
     'OCH-Community Multisig',
   orai167lluk7svl2dfp2gx6s7qpkqqvkhggattgdgmzxkjvq7h5znpghsu658uu:
     'AiRight Fund',
+  orai17g4emur33gqyrklhrzfrgc2f70d0rvgjg4udhdh67t9z3tlpmrfsa9mqs6:
+    'SmartML-Monthly-Payment',
   orai1ux58gsuj3cnjvehpnu9k32u3kmtskfghljhn3yqqwfdhve34fcfq26llsf:
     'SmartML-ORAI-Allocation',
   orai1rkktlamqzqr4p8ap462aumsktdscndrk5pfccu884e5rn730a4dsgszw0p:
