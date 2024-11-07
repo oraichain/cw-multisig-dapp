@@ -88,7 +88,7 @@ const ProposalCreate: NextPage = () => {
       .then((response) => {
         setLoading(false);
         setTransactionHash(response.transactionHash);
-        const [{ events }] = response.logs;
+        const events = response.events;
         const [wasm] = events.filter((e) => e.type === 'wasm');
         const [{ value }] = wasm.attributes.filter(
           (w) => w.key === 'proposal_id'
