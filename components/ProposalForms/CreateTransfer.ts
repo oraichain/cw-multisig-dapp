@@ -19,7 +19,7 @@ export default class CreatTransfer extends GenericForm {
       required: ['amount', 'to'],
       properties: {
         amount: {
-          type: 'number',
+          type: 'string',
           title: 'ORAI',
         },
         to: {
@@ -33,6 +33,7 @@ export default class CreatTransfer extends GenericForm {
   }
 
   protected override processMessages({ amount, to, multisigAddress }) {
+    this.validateNumber('amount', amount);
     const msgs = [
       {
         bank: {

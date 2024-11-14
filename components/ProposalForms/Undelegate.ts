@@ -1,9 +1,9 @@
-import { toAmount } from 'util/conversion'
-import GenericForm from './GenericForm'
+import { toAmount } from 'util/conversion';
+import GenericForm from './GenericForm';
 
 export default class Undelegate extends GenericForm {
   constructor(key: string) {
-    super(key)
+    super(key);
 
     const uiSchema = {
       amount: {
@@ -15,13 +15,13 @@ export default class Undelegate extends GenericForm {
       'ui:submitButtonOptions': {
         submitText: 'Undelegate',
       },
-    }
+    };
 
     const schema = {
       required: ['amount', 'validator'],
       properties: {
         amount: {
-          type: 'number',
+          type: 'string',
           title: 'ORAI',
         },
         validator: {
@@ -30,12 +30,13 @@ export default class Undelegate extends GenericForm {
           maxLength: 50,
         },
       },
-    }
+    };
 
-    super.init('Undelegate native ORAI from a validator', uiSchema, schema)
+    super.init('Undelegate native ORAI from a validator', uiSchema, schema);
   }
 
   protected override processMessages({ amount, validator }) {
+    this.validateNumber('amount', amount);
     const msgs = [
       {
         staking: {
@@ -48,8 +49,8 @@ export default class Undelegate extends GenericForm {
           },
         },
       },
-    ]
+    ];
 
-    return msgs
+    return msgs;
   }
 }

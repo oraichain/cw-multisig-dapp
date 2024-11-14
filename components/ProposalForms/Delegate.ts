@@ -1,9 +1,9 @@
-import { toAmount } from 'util/conversion'
-import GenericForm from './GenericForm'
+import { toAmount } from 'util/conversion';
+import GenericForm from './GenericForm';
 
 export default class Delegate extends GenericForm {
   constructor(key: string) {
-    super(key)
+    super(key);
     const uiSchema = {
       list_delegations: {
         items: {
@@ -14,7 +14,7 @@ export default class Delegate extends GenericForm {
       'ui:submitButtonOptions': {
         submitText: 'Delegate',
       },
-    }
+    };
 
     const schema = {
       required: ['list_delegations'],
@@ -25,7 +25,7 @@ export default class Delegate extends GenericForm {
             type: 'object',
             properties: {
               amount: {
-                type: 'number',
+                type: 'string',
                 title: 'ORAI',
               },
               validator: {
@@ -39,24 +39,31 @@ export default class Delegate extends GenericForm {
           default: [],
         },
       },
-    }
+    };
 
-    super.init('Delegate native ORAIs to a set of validators', uiSchema, schema)
+    super.init(
+      'Delegate native ORAIs to a set of validators',
+      uiSchema,
+      schema
+    );
   }
 
   protected override processMessages({ list_delegations }) {
-    const msgs = list_delegations.map((delegation: any) => ({
-      staking: {
-        delegate: {
-          validator: delegation.validator,
-          amount: {
-            denom: process.env.NEXT_PUBLIC_STAKING_DENOM,
-            amount: toAmount(delegation.amount),
+    const msgs = list_delegations.map((delegation: any) => {
+      this.validateNumber('amount', delegation.amount);
+      return {
+        staking: {
+          delegate: {
+            validator: delegation.validator,
+            amount: {
+              denom: process.env.NEXT_PUBLIC_STAKING_DENOM,
+              amount: toAmount(delegation.amount),
+            },
           },
         },
-      },
-    }))
+      };
+    });
 
-    return msgs
+    return msgs;
   }
 }

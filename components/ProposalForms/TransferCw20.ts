@@ -1,10 +1,10 @@
-import { toBinary } from '@cosmjs/cosmwasm-stargate'
-import { toAmount } from 'util/conversion'
-import GenericForm from './GenericForm'
+import { toBinary } from '@cosmjs/cosmwasm-stargate';
+import { toAmount } from 'util/conversion';
+import GenericForm from './GenericForm';
 
 export default class TrasnferCw20 extends GenericForm {
   constructor(key: string) {
-    super(key)
+    super(key);
 
     const uiSchema = {
       cw20_addr: {
@@ -19,7 +19,7 @@ export default class TrasnferCw20 extends GenericForm {
       'ui:submitButtonOptions': {
         submitText: 'Submit',
       },
-    }
+    };
     const schema = {
       properties: {
         cw20_addr: {
@@ -29,7 +29,7 @@ export default class TrasnferCw20 extends GenericForm {
           title: 'CW20 token address to send from',
         },
         amount: {
-          type: 'number',
+          type: 'string',
           title: 'CW20 amount (exponent: 6)',
         },
         to: {
@@ -38,12 +38,13 @@ export default class TrasnferCw20 extends GenericForm {
           maxLength: 63,
         },
       },
-    }
+    };
 
-    super.init('Transfer CW20 tokens', uiSchema, schema)
+    super.init('Transfer CW20 tokens', uiSchema, schema);
   }
 
   protected override processMessages({ cw20_addr, amount, to }) {
+    this.validateNumber('amount', amount);
     const msgs = [
       {
         wasm: {
@@ -56,8 +57,8 @@ export default class TrasnferCw20 extends GenericForm {
           },
         },
       },
-    ]
+    ];
 
-    return msgs
+    return msgs;
   }
 }
