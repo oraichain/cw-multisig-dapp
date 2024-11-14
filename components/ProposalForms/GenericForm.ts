@@ -70,4 +70,10 @@ export default class GenericForm<
       alert(ex.toString());
     }
   }
+
+  validateNumber(key: string, value: string): void {
+    if (isNaN(Number(value)) || isNaN(parseFloat(value))) {
+      throw new Error(`${key} must be a number`);
+    }
+  }
 }

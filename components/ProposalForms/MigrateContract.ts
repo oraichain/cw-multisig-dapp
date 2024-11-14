@@ -1,8 +1,8 @@
-import GenericForm from './GenericForm'
+import GenericForm from './GenericForm';
 
 export default class MigrateContract extends GenericForm {
   constructor(key: string) {
-    super(key)
+    super(key);
 
     const uiSchema = {
       contract_addr: {
@@ -20,7 +20,7 @@ export default class MigrateContract extends GenericForm {
       'ui:submitButtonOptions': {
         submitText: 'Submit',
       },
-    }
+    };
     const schema = {
       required: ['contract_addr', 'new_code_id'],
       properties: {
@@ -31,7 +31,7 @@ export default class MigrateContract extends GenericForm {
           title: 'Contract address to be migrated',
         },
         new_code_id: {
-          type: 'number',
+          type: 'string',
           title: 'The new Code Id that the contract is to be migrated to',
         },
         message: {
@@ -39,9 +39,9 @@ export default class MigrateContract extends GenericForm {
           title: 'Optional migrate message for the contract if needed',
         },
       },
-    }
+    };
 
-    super.init('Migrate A Smart Contract', uiSchema, schema)
+    super.init('Migrate A Smart Contract', uiSchema, schema);
   }
 
   protected override processMessages({
@@ -49,18 +49,19 @@ export default class MigrateContract extends GenericForm {
     new_code_id,
     message = '{}', // default message
   }) {
+    this.validateNumber('new_code_id', new_code_id);
     const msgs = [
       {
         wasm: {
           migrate: {
             contract_addr,
-            new_code_id,
+            new_code_id: Number(new_code_id),
             msg: Buffer.from(message).toString('base64'),
           },
         },
       },
-    ]
+    ];
 
-    return msgs
+    return msgs;
   }
 }
