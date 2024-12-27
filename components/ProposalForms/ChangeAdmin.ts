@@ -34,7 +34,7 @@ export default class ChangeAdmin extends GenericForm {
           execute: {
             contract_addr: groupAddress,
             msg: toBinary({ update_admin: { admin: new_admin } }),
-            send: [],
+            funds: [],
           },
         },
       },

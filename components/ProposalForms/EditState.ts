@@ -39,7 +39,7 @@ export default class EditState extends GenericForm {
           execute: {
             contract_addr: multisigAddress,
             msg: toBinary({ edit_state: { group_addr } }),
-            send: [],
+            funds: [],
           },
         },
       },
