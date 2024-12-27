@@ -70,7 +70,7 @@ export default class ChangeMembers extends GenericForm {
             msg: toBinary({
               update_members: { add: new_members, remove: remove_members },
             }),
-            send: [],
+            funds: [],
           },
         },
       },
