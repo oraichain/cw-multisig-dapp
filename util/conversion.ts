@@ -99,7 +99,21 @@ export const decodeProto = (
   const typeUrl = value.type_url || value.typeUrl;
   if (typeUrl) {
     // decode proto
-    return decodeProto(customRegistry.decode({ typeUrl, value: value.value }));
+    if (typeof value.value === 'object' && !Array.isArray(value.value)) {
+      return value;
+    }
+    if (typeof value.value === 'string') {
+      try {
+        value.value = fromBinary(value.value);
+      } catch {
+        value.value = Buffer.from(value.value, 'base64');
+      }
+    }
+    const decodedValue = customRegistry.decode({ typeUrl, value: value.value });
+    return {
+      type_url: typeUrl,
+      value: decodeProto(decodedValue),
+    };
   }
   for (const k in value) {
     if (
@@ -110,8 +124,9 @@ export const decodeProto = (
         value[k] = fromBinary(value[k]);
       } catch {}
     }
-    if (typeof value[k] === 'object')
+    if (typeof value[k] === 'object') {
       value[k] = decodeProto(value[k], decodeBase64Recursive, path + '.' + k);
+    }
   }
   if (value.msg instanceof Uint8Array)
     value.msg = JSON.parse(fromAscii(value.msg));
