@@ -1,0 +1,30 @@
+name: Deploy Prod
+
+on:
+  push:
+    branches:
+      - main
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      ref:
+        default: ''
+        description: 'ref name'
+        type: string
+        required: true
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref_name }}
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.PAT }}
+          repository: oraichain/infra
+          event-type: firebase
+          client-payload: '{"ref": "${{ github.ref }}", "ref_name": "${{ github.ref_name }}", "repo": "${{ github.repository }}", "node_version": "18", "project": "oraichain-dapp", "target": "cw-multisig"}'
