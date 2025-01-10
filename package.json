@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.1",
+    "@cosmjs/cosmwasm-stargate": "^0.32.4",
+    "@cosmjs/stargate": "^0.32.4",
     "@rjsf/core": "^5.1.0",
     "@rjsf/utils": "^5.1.0",
     "@rjsf/validator-ajv8": "^5.6.2",
@@ -19,9 +21,7 @@
     "next": "^14.1.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-select": "^5.7.5",
-    "@cosmjs/cosmwasm-stargate": "^0.32.4",
-    "@cosmjs/stargate": "^0.32.4"
+    "react-select": "^5.7.5"
   },
   "devDependencies": {
     "@oraichain/common-contracts-sdk": "^1.0.31",
