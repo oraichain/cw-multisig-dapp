@@ -26,10 +26,10 @@ function WalletLoader({
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 animate-pulse">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8">
         <Loader />
-        <p className="mt-4 text-base-content/70 text-lg animate-fadeIn">
-          Loading wallet data...
+        <p className="mt-2 text-base-content/80 text-lg animate-fadeIn bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-medium">
+          Synchronizing with blockchain...
         </p>
       </div>
     );
@@ -38,10 +38,10 @@ function WalletLoader({
   return (
     <>
       {error && (
-        <div className="mb-6 animate-fadeIn">
+        <div className="mb-6 animate-fadeIn max-w-lg mx-auto w-full">
           <LineAlert
             variant="error"
-            className="text-lg font-medium px-4 py-3 rounded-lg shadow-md"
+            className="text-lg font-medium px-4 py-3 rounded-lg shadow-md backdrop-blur-sm"
             msg={error.message ?? String(error)}
           />
         </div>

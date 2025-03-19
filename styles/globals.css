@@ -6,7 +6,7 @@ html, body {
     height: 100%;
     overflow: hidden;
     scroll-behavior: smooth;
-    @apply text-base-content bg-base-100;
+    @apply text-base-content bg-gradient-to-br from-base-100 to-base-200;
 }
 
 #__next {
@@ -16,6 +16,16 @@ html, body {
     left: 0;
     right: 0;
     overflow: auto;
+    @apply bg-gradient-to-br from-base-100 to-base-200;
+}
+
+/* Animation delay utilities */
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
 }
 
 /* Page transition */
@@ -38,7 +48,12 @@ html, body {
 
 /* Card enhancements */
 .card {
-    @apply transition-all duration-300;
+    @apply transition-all duration-300 backdrop-blur-sm bg-white/10 border border-white/20;
+}
+
+/* Glass effect */
+.glass-card {
+    @apply bg-white/10 backdrop-blur-sm border border-white/20 shadow-xl;
 }
 
 /* Input enhancements */
@@ -47,7 +62,11 @@ input, textarea, select {
 }
 
 .input:focus, .textarea:focus, .select:focus {
-    @apply outline-none ring-1 ring-primary;
+    @apply outline-none ring-2 ring-primary/50;
+}
+
+.input, .textarea, .select {
+    @apply bg-white/20 backdrop-blur-sm border-white/20;
 }
 
 /* Alert styles */
@@ -62,7 +81,12 @@ input, textarea, select {
 
 /* Custom backgrounds */
 .w-screen {
-    @apply bg-base-100;
+    @apply bg-transparent;
+}
+
+/* Gradient text */
+.gradient-text {
+    @apply bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent;
 }
 
 /* Typography improvements */
@@ -96,10 +120,26 @@ a {
     .stroke-current{
         fill: none;
     }
+    
+    .nav-blur {
+        @apply bg-base-100/80;
+    }
+    
+    .card {
+        @apply bg-base-200/50;
+    }
 }
 
 [data-theme='stargazeLight'] {
-    --primary-color: dimgray;    
+    --primary-color: dimgray;
+    
+    .nav-blur {
+        @apply bg-base-100/80;
+    }
+    
+    .card {
+        @apply bg-base-200/50;
+    }
 }
 
 /* Form styles */

@@ -247,7 +247,9 @@ const Proposal: NextPage = () => {
           ) : (
             <div className="container mx-auto max-w-lg text-left">
               <h1 className="text-3xl font-bold mb-8">{proposal.title}</h1>
-              <p className="whitespace-pre-line break-all mb-8">{proposal.description}</p>
+              <p className="whitespace-pre-line break-all mb-8">
+                {proposal.description}
+              </p>
               <div className="p-2 border border-black rounded mb-8">
                 <ReactCodeMirror
                   className="max-w-lg"

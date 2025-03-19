@@ -41,17 +41,17 @@ function LineAlert({
   className?: string;
 }) {
   const alertClassName = [
-    'alert',
+    'backdrop-blur-sm',
     variant === 'success'
-      ? 'bg-success/10 text-success-content border border-success/20'
-      : 'bg-error/10 text-error-content border border-error/20',
+      ? 'bg-success/10 text-success border border-success/20'
+      : 'bg-error/10 text-error border border-error/20',
     'shadow-sm rounded-lg',
     className,
   ].join(' ');
 
   return (
     <div className={alertClassName}>
-      <div className="flex items-center w-full">
+      <div className="flex items-center w-full p-3">
         {icons[variant]}
         {link ? (
           <a

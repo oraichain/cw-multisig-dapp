@@ -1,17 +1,17 @@
-'use client'
-import { useState } from 'react'
-import daisyuiThemes from 'styles/daisyui-themes.json'
+'use client';
+import { useState } from 'react';
+import daisyuiThemes from 'styles/daisyui-themes.json';
 
-const themes = Object.keys(daisyuiThemes) || ['']
-export const defaultTheme = themes[1]
+const themes = Object.keys(daisyuiThemes) || [''];
+export const defaultTheme = themes[1];
 
 function ThemeToggle() {
-  const [theme, setTheme] = useState(defaultTheme)
+  const [theme, setTheme] = useState(defaultTheme);
 
   return (
     <div className="form-control lg:mr-4 md:ml-auto">
       <label className="cursor-pointer label">
-        <span className="label-text">
+        <span className="label-text flex align-center">
           <svg
             width="20"
             height="20"
@@ -65,14 +65,14 @@ function ThemeToggle() {
           data-act-class="active"
           checked={theme !== themes[0]}
           onChange={() => {
-            const newTheme = theme !== defaultTheme ? defaultTheme : themes[0]
-            document.documentElement.setAttribute('data-theme', newTheme)
-            window.localStorage.setItem('theme', newTheme)
-            setTheme(newTheme)
+            const newTheme = theme !== defaultTheme ? defaultTheme : themes[0];
+            document.documentElement.setAttribute('data-theme', newTheme);
+            window.localStorage.setItem('theme', newTheme);
+            setTheme(newTheme);
           }}
           readOnly
         />
-        <span className="label-text">
+        <span className="label-text flex align-center">
           <svg
             width="20"
             height="20"
@@ -92,7 +92,7 @@ function ThemeToggle() {
         </span>
       </label>
     </div>
-  )
+  );
 }
 
-export default ThemeToggle
+export default ThemeToggle;
