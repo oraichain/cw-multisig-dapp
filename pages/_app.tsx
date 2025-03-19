@@ -22,7 +22,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SigningCosmWasmProvider>
       <Layout>
-        <Component {...pageProps} />
+        <div className="page-transition">
+          <Component {...pageProps} />
+        </div>
       </Layout>
     </SigningCosmWasmProvider>
   );

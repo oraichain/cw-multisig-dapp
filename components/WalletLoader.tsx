@@ -26,8 +26,11 @@ function WalletLoader({
 
   if (loading) {
     return (
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 animate-pulse">
         <Loader />
+        <p className="mt-4 text-base-content/70 text-lg animate-fadeIn">
+          Loading wallet data...
+        </p>
       </div>
     );
   }
@@ -35,13 +38,15 @@ function WalletLoader({
   return (
     <>
       {error && (
-        <LineAlert
-          variant="error"
-          className="text-xl font-bold"
-          msg={error.message ?? error}
-        />
+        <div className="mb-6 animate-fadeIn">
+          <LineAlert
+            variant="error"
+            className="text-lg font-medium px-4 py-3 rounded-lg shadow-md"
+            msg={error.message ?? String(error)}
+          />
+        </div>
       )}
-      {children}
+      <div className="animate-fadeIn">{children}</div>
     </>
   );
 }

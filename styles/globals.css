@@ -5,6 +5,8 @@
 html, body {
     height: 100%;
     overflow: hidden;
+    scroll-behavior: smooth;
+    @apply text-base-content bg-base-100;
 }
 
 #__next {
@@ -16,33 +18,91 @@ html, body {
     overflow: auto;
 }
 
+/* Page transition */
+.page-transition {
+    @apply animate-fadeIn;
+}
+
+/* Button enhancements */
+.btn {
+    @apply transition-all duration-300;
+}
+
+.btn-primary {
+    @apply hover:shadow-md;
+}
+
+.btn:disabled, .btn.loading {
+    @apply opacity-70 cursor-not-allowed;
+}
+
+/* Card enhancements */
+.card {
+    @apply transition-all duration-300;
+}
+
+/* Input enhancements */
+input, textarea, select {
+    @apply transition-all duration-200;
+}
+
+.input:focus, .textarea:focus, .select:focus {
+    @apply outline-none ring-1 ring-primary;
+}
+
+/* Alert styles */
+.alert {
+    @apply transition-all duration-300;
+}
+
+/* Layout helpers */
+.container {
+    @apply mx-auto px-4;
+}
+
+/* Custom backgrounds */
 .w-screen {
-    background-color: #0F1017;
+    @apply bg-base-100;
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+    @apply font-bold leading-tight;
+}
+
+h1 {
+    @apply text-3xl md:text-4xl;
+}
+
+h2 {
+    @apply text-2xl md:text-3xl;
+}
+
+h3 {
+    @apply text-xl md:text-2xl;
+}
+
+a {
+    @apply text-left transition-colors duration-200;
 }
 
 .label-text {
-    line-height: 0;
-}
-a {
-    text-align: left;
-}
-.stroke-current{
-    fill: white;
-}
-nav .text-2xl{
-    color:white;
+    line-height: 1.2;
 }
 
+/* Theme-specific styles */
 [data-theme='stargazeDark'] {
     --primary-color: white;
     .stroke-current{
         fill: none;
     }
 }
+
 [data-theme='stargazeLight'] {
     --primary-color: dimgray;    
 }
 
+/* Form styles */
 .rjsf {
     max-width: 32rem;
     text-align: left;
@@ -56,11 +116,13 @@ nav .text-2xl{
         max-width: 1024px;
     }
 }
+
 @media (min-width: 768px){
     .rjsf {
         max-width: 768px;
     }
 }
+
 @media (min-width: 640px){
     .rjsf {
         max-width: 640px;
