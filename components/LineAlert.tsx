@@ -59,6 +59,7 @@ function LineAlert({
             href={link}
             target="_blank"
             rel="noopener noreferrer"
+            style={{ wordBreak: 'break-all' }}
           >
             {msg}
           </a>

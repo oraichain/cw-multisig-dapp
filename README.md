@@ -72,4 +72,7 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 ## Attribution
-This is a fork of https://github.com/ebaker/cw3-fixed-multisig-dapp, made by Eliot. 
+
+This is a fork of https://github.com/ebaker/cw3-fixed-multisig-dapp, made by Eliot.
+
+4. Demo update UI/UX for internal tools (dev nhà xây)
