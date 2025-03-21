@@ -176,7 +176,7 @@ const Home: NextPage = () => {
             <div className="relative rounded-full overflow-hidden">
               <input
                 className="input bg-base-100/30 focus:bg-base-100/50 w-full rounded-full text-center font-mono border-white/10 transition-all duration-300"
-                placeholder="Search by node name..."
+                placeholder="Search by wallet name..."
                 onChange={(event) => {
                   setFilter(event.currentTarget.value.trim().toLowerCase());
                 }}
