@@ -101,7 +101,7 @@ const Home: NextPage = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            Access Blockchain Node
+            Access Wallet
           </h2>
           <div className="relative rounded-full shadow-md w-full overflow-hidden transition-all duration-300 hover:shadow-lg">
             <input
@@ -170,7 +170,7 @@ const Home: NextPage = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            Recent Blockchain Nodes
+            Recent Wallets
           </h2>
           <div className="rounded-box mb-6">
             <div className="relative rounded-full overflow-hidden">
@@ -239,7 +239,7 @@ const Home: NextPage = () => {
               ))
             ) : (
               <div className="col-span-full text-center py-6 text-base-content/60 bg-base-100/20 rounded-lg backdrop-blur-sm">
-                No blockchain nodes found. Try creating a new node.
+                No wallets found. Try creating a new node.
               </div>
             )}
           </div>
