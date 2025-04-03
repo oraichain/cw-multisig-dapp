@@ -30,6 +30,7 @@ html, body {
 
 /* Page transition */
 .page-transition {
+    min-width: 360px;
     @apply animate-fadeIn;
 }
 
