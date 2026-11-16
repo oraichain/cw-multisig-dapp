@@ -107,11 +107,17 @@ const Home: NextPage = () => {
             <input
               id="multisig-address"
               className="input bg-base-100/30 focus:bg-base-100/50 w-full pr-24 rounded-full text-center font-mono text-lg border-white/10 transition-all duration-300"
-              placeholder="Enter blockchain address..."
+              placeholder="CW3 multisig or x/group policy address..."
               value={address}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {
-                  router.push(`/${event.currentTarget.value}`);
+                  const v = event.currentTarget.value.trim();
+                  if (!v) return;
+                  router.push(
+                    v.startsWith('group/') || v.includes('/group/')
+                      ? `/${v.replace(/^\//, '')}`
+                      : `/${v}`
+                  );
                 }
               }}
               onChange={(event) => setAddress(event.target.value)}
@@ -123,14 +129,29 @@ const Home: NextPage = () => {
                 const inputEl = document.getElementById(
                   'multisig-address'
                 ) as HTMLInputElement;
-                router.push(`/${inputEl.value}`);
+                const v = inputEl.value.trim();
+                if (!v) return;
+                router.push(`/${v}`);
               }}
             >
               GO
             </button>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-4 flex gap-2">
+            <button
+              className="btn btn-outline btn-sm flex-1 rounded-full"
+              onClick={() => {
+                const v = address.trim();
+                if (!v) return;
+                router.push(`/group/${v}`);
+              }}
+            >
+              Open as x/group policy
+            </button>
+          </div>
+
+          <div className="mt-8 space-y-3">
             <button
               className="btn bg-gradient-to-r from-primary to-secondary border-0 text-white btn-lg font-semibold hover:shadow-lg text-xl rounded-full w-full transition-all duration-300 transform hover:opacity-90"
               onClick={() => router.push('/create')}
@@ -150,6 +171,12 @@ const Home: NextPage = () => {
                 />
               </svg>
               CREATE NEW MULTISIG NODE
+            </button>
+            <button
+              className="btn btn-outline btn-lg font-semibold text-lg rounded-full w-full"
+              onClick={() => router.push('/group/create')}
+            >
+              CREATE x/group POLICY
             </button>
           </div>
         </div>

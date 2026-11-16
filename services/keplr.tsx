@@ -16,9 +16,13 @@ export const connectKeplr = async () => {
     throw new Error('Please install keplr extension');
   } else {
     if (window.keplr.experimentalSuggestChain) {
-      const stakingDenom = convertFromMicroDenom(
-        process.env.NEXT_PUBLIC_STAKING_DENOM || 'orai'
-      );
+      // `orai` is already the display denom on Oraichain (not a micro-denom prefix).
+      const stakingDenom =
+        process.env.NEXT_PUBLIC_STAKING_DENOM === 'orai'
+          ? 'ORAI'
+          : convertFromMicroDenom(
+              process.env.NEXT_PUBLIC_STAKING_DENOM || 'orai'
+            );
 
       try {
         // Keplr v0.6.4 introduces an experimental feature that supports the feature to suggests the chain from a webpage.
@@ -92,6 +96,11 @@ export const connectKeplr = async () => {
               // (Optional) Keplr can show the fiat value of the coin if a coingecko id is provided.
               // You can get id from https://api.coingecko.com/api/v3/coins/list if it is listed.
               // coinGeckoId: ""
+              gasPriceStep: {
+                low: 0.001,
+                average: 0.0025,
+                high: 0.004,
+              },
             },
           ],
           // (Optional) The number of the coin type.
@@ -100,18 +109,24 @@ export const connectKeplr = async () => {
           // However, some early chains may choose to use the Cosmos Hub BIP44 path of '118'.
           // So, this is separated to support such chains.
           coinType: 118,
+          // Required by newer Keplr when validating suggested chains.
+          features: ['ibc-transfer', 'cosmwasm'],
           // (Optional) This is used to set the fee of the transaction.
           // If this field is not provided, Keplr extension will set the default gas price as (low: 0.01, average: 0.025, high: 0.04).
           // Currently, Keplr doesn't support dynamic calculation of the gas prices based on on-chain data.
           // Make sure that the gas prices are higher than the minimum gas prices accepted by chain validators and RPC/REST endpoint.
           gasPriceStep: {
-            low: 0.01,
-            average: 0.025,
-            high: 0.04,
+            low: 0.001,
+            average: 0.0025,
+            high: 0.004,
           },
         });
-      } catch {
-        throw new Error('Failed to suggest the chain');
+      } catch (err: any) {
+        throw new Error(
+          err?.message
+            ? `Failed to suggest the chain: ${err.message}`
+            : 'Failed to suggest the chain'
+        );
       }
     } else {
       throw new Error('Please use the recent version of keplr extension');

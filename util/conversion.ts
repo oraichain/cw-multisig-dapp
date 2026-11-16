@@ -3,6 +3,15 @@ import { fromAscii } from '@cosmjs/encoding';
 import { TextProposal } from 'cosmjs-types/cosmos/gov/v1beta1/gov';
 import { defaultRegistryTypes as defaultStargateTypes } from '@cosmjs/stargate';
 import { JsonObject, fromBinary, wasmTypes } from '@cosmjs/cosmwasm-stargate';
+import {
+  PercentageDecisionPolicy,
+  ThresholdDecisionPolicy,
+} from 'cosmjs-types/cosmos/group/v1/types';
+import {
+  MsgAddBlacklist,
+  MsgRemoveBlacklist,
+  MsgRemoveBlacklistAndRecover,
+} from 'util/txfeesProto';
 
 const truncDecimals = 6;
 const atomic = 10 ** truncDecimals;
@@ -64,8 +73,28 @@ export const zeroStakingCoin = {
 export const customRegistry = new Registry([
   ...defaultStargateTypes,
   ...wasmTypes,
-]);
-customRegistry.register('/cosmos.gov.v1beta1.TextProposal', TextProposal);
+] as any);
+customRegistry.register('/cosmos.gov.v1beta1.TextProposal', TextProposal as any);
+customRegistry.register(
+  '/cosmos.group.v1.ThresholdDecisionPolicy',
+  ThresholdDecisionPolicy as any
+);
+customRegistry.register(
+  '/cosmos.group.v1.PercentageDecisionPolicy',
+  PercentageDecisionPolicy as any
+);
+customRegistry.register(
+  '/cosmwasm.txfees.v1.MsgAddBlacklist',
+  MsgAddBlacklist as any
+);
+customRegistry.register(
+  '/cosmwasm.txfees.v1.MsgRemoveBlacklist',
+  MsgRemoveBlacklist as any
+);
+customRegistry.register(
+  '/cosmwasm.txfees.v1.MsgRemoveBlacklistAndRecover',
+  MsgRemoveBlacklistAndRecover as any
+);
 
 export const encodeProto = (obj: any) => {
   if (typeof obj !== 'object') return obj;
