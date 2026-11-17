@@ -123,16 +123,12 @@ const CreateGroup: NextPage = () => {
         '86400'
       const metadata =
         (form.elements.namedItem('metadata') as HTMLInputElement)?.value || ''
-      const groupPolicyAsAdmin = (
-        form.elements.namedItem('groupPolicyAsAdmin') as HTMLInputElement
-      )?.checked
-
       const msg = buildCreateGroupWithPolicyMsg({
         admin: walletAddress,
         members,
         groupMetadata: metadata,
         groupPolicyMetadata: metadata,
-        groupPolicyAsAdmin,
+        groupPolicyAsAdmin: true,
         threshold,
         votingPeriodSeconds: votingPeriod,
         minExecutionPeriodSeconds: 0,
@@ -232,17 +228,10 @@ const CreateGroup: NextPage = () => {
             </div>
           </div>
 
-          <label className="flex items-center gap-2 mb-6 cursor-pointer">
-            <input
-              type="checkbox"
-              name="groupPolicyAsAdmin"
-              className="checkbox checkbox-primary"
-              defaultChecked
-            />
-            <span className="text-left">
-              Group policy as admin (self-owned policy)
-            </span>
-          </label>
+          <p className="text-xs opacity-60 mb-6 text-left">
+            The group policy becomes the admin of both the group and itself, so
+            member and policy changes must go through proposals.
+          </p>
 
           <button
             type="submit"

@@ -5,6 +5,24 @@ import WalletLoader from 'components/WalletLoader';
 import Link from 'next/link';
 import { contracts } from '../util/constants';
 import { slugify } from '../util/constants';
+import { queryGroupPolicyInfo } from 'services/groupLcd';
+
+const BECH32_PREFIX = process.env.NEXT_PUBLIC_CHAIN_BECH32_PREFIX || 'orai';
+
+// Address inputs that are x/group policies open the group page; everything
+// else (CW3 contract addresses, wallet slugs) keeps the CW3 route.
+async function resolveTarget(input: string): Promise<string> {
+  const v = input.trim().replace(/^\//, '');
+  if (v.startsWith('group/')) return `/${v}`;
+  if (!v.startsWith(`${BECH32_PREFIX}1`)) return `/${v}`;
+  try {
+    const res = await queryGroupPolicyInfo(v);
+    if (res.info?.address) return `/group/${v}`;
+  } catch {
+    // not a group policy
+  }
+  return `/${v}`;
+}
 
 function updateVisit(contract: string) {
   window.localStorage.setItem(
@@ -19,6 +37,17 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(true);
   const [visits, setVisits] = useState([]);
   const [filter, setFilter] = useState('');
+  const [resolving, setResolving] = useState(false);
+
+  const go = async (input: string) => {
+    if (!input.trim() || resolving) return;
+    setResolving(true);
+    try {
+      router.push(await resolveTarget(input));
+    } finally {
+      setResolving(false);
+    }
+  };
 
   useEffect(() => {
     if (router.asPath !== router.route && router.route === '/') {
@@ -110,44 +139,17 @@ const Home: NextPage = () => {
               placeholder="CW3 multisig or x/group policy address..."
               value={address}
               onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  const v = event.currentTarget.value.trim();
-                  if (!v) return;
-                  router.push(
-                    v.startsWith('group/') || v.includes('/group/')
-                      ? `/${v.replace(/^\//, '')}`
-                      : `/${v}`
-                  );
-                }
+                if (event.key === 'Enter') go(event.currentTarget.value);
               }}
               onChange={(event) => setAddress(event.target.value)}
             />
             <button
               className="absolute top-0 right-0 bottom-0 px-8 py-5 rounded-r-full bg-gradient-to-r from-primary to-secondary text-white text-xl font-medium transition-all duration-300 hover:opacity-90"
               style={{ marginTop: -10 }}
-              onClick={() => {
-                const inputEl = document.getElementById(
-                  'multisig-address'
-                ) as HTMLInputElement;
-                const v = inputEl.value.trim();
-                if (!v) return;
-                router.push(`/${v}`);
-              }}
+              disabled={resolving}
+              onClick={() => go(address)}
             >
-              GO
-            </button>
-          </div>
-
-          <div className="mt-4 flex gap-2">
-            <button
-              className="btn btn-outline btn-sm flex-1 rounded-full"
-              onClick={() => {
-                const v = address.trim();
-                if (!v) return;
-                router.push(`/group/${v}`);
-              }}
-            >
-              Open as x/group policy
+              {resolving ? '...' : 'GO'}
             </button>
           </div>
 

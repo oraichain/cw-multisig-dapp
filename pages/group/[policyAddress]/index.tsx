@@ -1,7 +1,6 @@
 import type { NextPage } from 'next'
 import WalletLoader from 'components/WalletLoader'
 import ProposalCard from 'components/ProposalCard'
-import GroupMembersEditor from 'components/GroupMembersEditor'
 import { useSigningClient } from 'contexts/cosmwasm'
 import { PUBLIC_CHAIN_ID } from 'hooks/cosmwasm'
 import { useRouter } from 'next/router'
@@ -46,7 +45,6 @@ const GroupHome: NextPage = () => {
   const [group, setGroup] = useState<GroupInfo | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [refresh, setRefresh] = useState(0)
 
   useEffect(() => {
     if (!policyAddress) return
@@ -80,7 +78,7 @@ const GroupHome: NextPage = () => {
       })
       .catch((err) => setError(err.message || String(err)))
       .finally(() => setLoading(false))
-  }, [policyAddress, refresh])
+  }, [policyAddress])
 
   const isMember = members.some((m) => m.member?.address === walletAddress)
   const threshold =
@@ -108,6 +106,14 @@ const GroupHome: NextPage = () => {
                   <span className="opacity-60">threshold:</span>{' '}
                   {threshold ?? '—'}
                 </div>
+                {group && (
+                  <div>
+                    <span className="opacity-60">group admin:</span>{' '}
+                    {group.admin === policyAddress
+                      ? 'this policy (changes via proposals)'
+                      : group.admin}
+                  </div>
+                )}
                 {policy.metadata && (
                   <div>
                     <span className="opacity-60">metadata:</span>{' '}
@@ -150,16 +156,6 @@ const GroupHome: NextPage = () => {
             )
           })}
         </div>
-
-        {group && (
-          <GroupMembersEditor
-            groupId={group.id}
-            groupAdmin={group.admin}
-            policyAddress={policyAddress}
-            members={members}
-            onDone={() => setRefresh((n) => n + 1)}
-          />
-        )}
       </div>
 
       <div className="flex flex-col w-96 max-w-full px-2 py-4">

@@ -6,6 +6,7 @@ import {
   MsgExec,
   MsgSubmitProposal,
   MsgUpdateGroupMembers,
+  MsgUpdateGroupPolicyDecisionPolicy,
   MsgVote,
   Exec,
 } from 'cosmjs-types/cosmos/group/v1/tx'
@@ -44,6 +45,26 @@ export function parseDurationSeconds(input: string | number): Duration {
   })
 }
 
+function thresholdPolicyAny(params: {
+  threshold?: string
+  votingPeriodSeconds?: string | number
+  minExecutionPeriodSeconds?: string | number
+}): Any {
+  const policy = ThresholdDecisionPolicy.fromPartial({
+    threshold: params.threshold || '1',
+    windows: {
+      votingPeriod: parseDurationSeconds(params.votingPeriodSeconds ?? 86400),
+      minExecutionPeriod: parseDurationSeconds(
+        params.minExecutionPeriodSeconds ?? 0
+      ),
+    },
+  })
+  return Any.fromPartial({
+    typeUrl: '/cosmos.group.v1.ThresholdDecisionPolicy',
+    value: ThresholdDecisionPolicy.encode(policy).finish(),
+  })
+}
+
 export function buildCreateGroupWithPolicyMsg(params: {
   admin: string
   members: Array<{ address: string; weight: string; metadata?: string }>
@@ -54,16 +75,6 @@ export function buildCreateGroupWithPolicyMsg(params: {
   votingPeriodSeconds?: string | number
   minExecutionPeriodSeconds?: string | number
 }): EncodeObject {
-  const policy = ThresholdDecisionPolicy.fromPartial({
-    threshold: params.threshold || '1',
-    windows: {
-      votingPeriod: parseDurationSeconds(params.votingPeriodSeconds ?? 86400),
-      minExecutionPeriod: parseDurationSeconds(
-        params.minExecutionPeriodSeconds ?? 0
-      ),
-    },
-  })
-
   return {
     typeUrl: '/cosmos.group.v1.MsgCreateGroupWithPolicy',
     value: MsgCreateGroupWithPolicy.fromPartial({
@@ -76,10 +87,24 @@ export function buildCreateGroupWithPolicyMsg(params: {
       groupMetadata: params.groupMetadata || '',
       groupPolicyMetadata: params.groupPolicyMetadata || '',
       groupPolicyAsAdmin: !!params.groupPolicyAsAdmin,
-      decisionPolicy: Any.fromPartial({
-        typeUrl: '/cosmos.group.v1.ThresholdDecisionPolicy',
-        value: ThresholdDecisionPolicy.encode(policy).finish(),
-      }),
+      decisionPolicy: thresholdPolicyAny(params),
+    }),
+  }
+}
+
+export function buildUpdateDecisionPolicyMsg(params: {
+  admin: string
+  groupPolicyAddress: string
+  threshold: string
+  votingPeriodSeconds: string | number
+  minExecutionPeriodSeconds?: string | number
+}): EncodeObject {
+  return {
+    typeUrl: '/cosmos.group.v1.MsgUpdateGroupPolicyDecisionPolicy',
+    value: MsgUpdateGroupPolicyDecisionPolicy.fromPartial({
+      admin: params.admin,
+      groupPolicyAddress: params.groupPolicyAddress,
+      decisionPolicy: thresholdPolicyAny(params),
     }),
   }
 }
@@ -198,6 +223,21 @@ export function buildRemoveBlacklistAndRecoverMsg(
 }
 
 /** Parse JSON array of {type_url|@type, value} into EncodeObjects. */
+// Proto JSON uses snake_case, but cosmjs-types fromPartial ignores keys that are not camelCase.
+// Wasm `msg` payloads are opaque contract JSON and must keep their keys.
+function camelizeKeys(v: any): any {
+  if (Array.isArray(v)) return v.map(camelizeKeys)
+  if (v && typeof v === 'object' && !(v instanceof Uint8Array)) {
+    return Object.fromEntries(
+      Object.entries(v).map(([k, val]) => [
+        k.replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase()),
+        k === 'msg' ? val : camelizeKeys(val),
+      ])
+    )
+  }
+  return v
+}
+
 export function parseAnyMessagesJson(raw: string): EncodeObject[] {
   let parsed = JSON.parse(raw)
   if (!Array.isArray(parsed)) parsed = [parsed]
@@ -217,7 +257,7 @@ export function parseAnyMessagesJson(raw: string): EncodeObject[] {
     return {
       typeUrl,
       // @ts-ignore
-      value: type.fromPartial(value),
+      value: type.fromPartial(camelizeKeys(value)),
     }
   })
 }
