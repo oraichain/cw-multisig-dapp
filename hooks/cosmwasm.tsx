@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { connectKeplr } from 'services/keplr';
-import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc';
+import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import {
   CosmWasmClient,
   SigningCosmWasmClient,
 } from '@cosmjs/cosmwasm-stargate';
 import { GasPrice } from '@cosmjs/stargate';
+import { customRegistry } from 'util/conversion';
 
 const getStatus = Tendermint34Client.prototype.status;
 
@@ -13,19 +14,6 @@ CosmWasmClient.prototype.getHeight = async function () {
   const status = await getStatus.call(this.tmClient);
   return status.syncInfo.latestBlockHeight;
 };
-
-// @ts-ignore
-Tendermint34Client.detectVersion = Tendermint37Client.detectVersion = () => {};
-// @ts-ignore
-Tendermint34Client.prototype.status = Tendermint37Client.prototype.status =
-  () => {
-    return {
-      nodeInfo: {
-        network: PUBLIC_CHAIN_ID,
-        version: '',
-      },
-    };
-  };
 
 export interface ISigningCosmWasmClientContext {
   walletAddress: string;
@@ -63,39 +51,49 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const connectWallet = async () => {
     setLoading(true);
 
+    let step = 'suggest chain';
     try {
+      setError(null);
       await connectKeplr();
 
-      // enable website to access kepler
+      step = 'keplr.enable';
       await window.keplr.enable(PUBLIC_CHAIN_ID);
 
-      // get offline signer for signing txs
+      step = 'getOfflineSigner';
       const offlineSigner = await (window as any).getOfflineSigner(
         PUBLIC_CHAIN_ID
       );
 
-      // make client
+      step = 'getAccounts';
+      const [{ address }] = await offlineSigner.getAccounts();
+
+      step = 'connectWithSigner';
       const client = await SigningCosmWasmClient.connectWithSigner(
         PUBLIC_RPC_ENDPOINT,
         offlineSigner,
         {
+          registry: customRegistry as any,
           gasPrice: GAS_PRICE,
           broadcastPollIntervalMs: POLL_INTERVAL,
         }
       );
       setSigningClient(client);
-
-      // get user address
-      const [{ address }] = await offlineSigner.getAccounts();
       setWalletAddress(address);
-    } catch (error) {
-      // make fallback client
-      const client = await SigningCosmWasmClient.connectWithSigner(
-        PUBLIC_RPC_ENDPOINT,
-        null
-      );
-      setSigningClient(client);
-      setError(error);
+      setError(null);
+    } catch (error: any) {
+      console.error(`connectWallet failed at "${step}"`, error);
+      error = new Error(`[${step}] ${error?.message || String(error)}`);
+      // read-only fallback; ignore if RPC unreachable
+      try {
+        const client = await SigningCosmWasmClient.connect(PUBLIC_RPC_ENDPOINT);
+        setSigningClient(client as SigningCosmWasmClient);
+      } catch {
+        setSigningClient(null);
+      }
+      const detail = error.message.endsWith('Failed to fetch')
+        ? `${error.message}: RPC ${PUBLIC_RPC_ENDPOINT} (is local oraid running? CORS enabled?)`
+        : error.message;
+      setError(new Error(detail));
     }
     setLoading(false);
   };

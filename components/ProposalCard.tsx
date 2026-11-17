@@ -6,6 +6,8 @@ interface ProposalCardProps {
   slugAddress: string;
   status: string;
   expires_at: string;
+  /** Override link path; default `/{slugAddress}/{id}` */
+  href?: string;
 }
 
 const icons = {
@@ -86,9 +88,10 @@ export default function ProposalCard({
   slugAddress,
   status,
   expires_at,
+  href,
 }: ProposalCardProps) {
   return (
-    <Link href={`/${slugAddress}/${id}`}>
+    <Link href={href ?? `/${slugAddress}/${id}`}>
       <div className={`card mb-4`} title={`Expires at ${expires_at}`}>
         <div className="card-body p-2">
           <div className="text-md flex flex-row justify-between m-0">
